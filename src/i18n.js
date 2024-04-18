@@ -78,6 +78,8 @@ i18n
 
                     'New Frequent Expense': 'Gasto Frecuente Nuevo',
                     'Frequent Expenses': 'Gastos Frecuentes',
+                    'Monthly Price': 'Precio Mensual',
+
                     'Monthly Budget': 'Presupuesto Mensual'
 
 

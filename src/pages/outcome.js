@@ -226,15 +226,6 @@ const OutcomePage = () => {
 
                 </div>
 
-                <p>Total = {docs ? formatMoney(docs.reduce((acc, item) => {
-                    if (selectedCategory !== '' && selectedCategory === item.category) {
-                        return acc + item.price;
-                    } else if (selectedCategory === '') {
-                        return acc + item.price;
-                    } else {
-                        return acc; // 
-                    }
-                }, 0)) : null}</p>
 
 
                 <div className="container-2">
@@ -255,6 +246,16 @@ const OutcomePage = () => {
                                     }
 
                                 }): null}
+                                <TableRow elements={['Total',docs ? formatMoney(docs.reduce((acc, item) => {
+                                    if (selectedCategory !== '' && selectedCategory === item.category) {
+                                        return acc + item.price;
+                                    } else if (selectedCategory === '') {
+                                        return acc + item.price;
+                                    } else {
+                                        return acc; //
+                                    }
+                                }, 0)) : null ]}/>
+
 
                             </div>
                         </div>

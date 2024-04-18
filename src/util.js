@@ -123,8 +123,17 @@ const TableRow  = ({elements, id, auth, type, language})=> {
             navigate('/edit', { state: {auth: auth, language: language, id: id, type: type }});
         }
     }
+
+    let rowClass = 'tableRow';
+
+    if (!id){
+        rowClass='tableHeader'
+    } else if(id.includes('space')){
+        rowClass='space'
+    }
+
     return(
-        <div id={id} className={id ? "tableRow" : "tableHeader"} onClick={editFunction}>
+        <div id={id} className={rowClass} onClick={editFunction}>
 
 
 

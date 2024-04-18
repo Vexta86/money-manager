@@ -269,21 +269,26 @@ const Planner = () => {
                 <h1>{t('Monthly Budget')}</h1>
 
 
-                <p>Total = {monthlyDocs ? formatMoney(monthlyDocs.reduce((acc, item) => {
-                    return acc + item.price;
-                }, 0)) : formatMoney(0)}</p>
 
                 <div className='container-2'>
 
                     <div className="tableContainer">
                         <div className="table">
-                            <TableRow elements={[t('Category'), t('Name'), t('Price')]}/>
+                            <TableRow elements={[ t('Name'), t('Frequency'),t('Monthly Price')]}/>
+
+
+
                             {monthlyDocs ? monthlyDocs.map((catItem) => {
-                                const array = [catItem.category, '', 'Total = ' + formatMoney(catItem.price), ];
+
+                                const array = [ t('Category') + ' ' + catItem.category ,'Total  ' + formatMoney(catItem.price), ];
+
                                 console.log(catItem)
                                 const elementRows = catItem.elements[0].map(element => {
-                                    console.log(element)
-                                    const array = ['-', element.name, formatMoney(element.price / element.frequency)];
+
+                                    let freq = monthToFormat(element.frequency)
+                                    freq = freq[0] + ' ' + t(freq[1])
+
+                                    const array = [ element.name, freq, formatMoney(element.price / element.frequency)];
                                     return <TableRow elements={array}
                                                      id={element._id}
                                                      auth={auth}
@@ -293,45 +298,31 @@ const Planner = () => {
                                     />
                                 })
 
-                                return [...elementRows,
+                                return [<TableRow elements={['']} id='space'/>,
                                     <TableRow elements={array}
 
                                               type={'frequent-outcomes'}
-                                              language={language}/>,]
+                                              language={language}/>,
+
+                                    ...elementRows,
+                                    ]
 
 
                             }) : null}
-
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <h1>{t('Frequent Expenses')}</h1>
-
-
-                <div className='container-2'>
-                    <div className="tableContainer">
-                        <div className="table">
-                            <TableRow elements={[t('Category'), t('Frequency'), t('Name'), t('Price')]}/>
-                            {docs ? docs.map((item) => {
-                                const freq = monthToFormat(item.frequency)
-                                const array = [item.category, freq[0] + ' ' + t(freq[1]), item.name, formatMoney(item.price)];
-                                return <TableRow elements={array}
-                                                 id={item._id}
-                                                 auth={auth}
-                                                 type={'frequent-outcomes'}
-                                                 language={language}/>
-
-
-                            }) : null}
+                            <TableRow elements={[ 'Total', monthlyDocs ? formatMoney(monthlyDocs.reduce((acc, item) => {
+                                return acc + item.price;
+                            }, 0)) : formatMoney(0)]}/>
 
                         </div>
                     </div>
 
                     <QuickFrequentOutcome auth={auth}/>
+
                 </div>
+
+
+
+
 
 
                 <div className="menuContainer">
