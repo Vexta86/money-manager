@@ -1,0 +1,428 @@
+:root {
+    --light-color: #EEEEEE;
+    --dark-color: #222831;
+    --color-2: #393E46;
+    --color-1: #00ADB5;
+
+    --radius: 12px;
+
+}
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--light-color);
+    flex-grow: 1; /* Allow the container to grow to fill available space */
+    flex-shrink: 1; /* Allow the container to shrink if necessary */
+    min-height: calc(95vh); /* Set min-height to 100% of viewport height minus 50px (adjust as needed for your menu height) */
+    width: 100vw; /* Set width to 100% of viewport width */
+    height: 85vh;
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+
+}
+.container-red {
+    --dark-color: #312222;
+    --color-2: #463939;
+    --color-1: #b50000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--light-color);
+    flex-grow: 1; /* Allow the container to grow to fill available space */
+    flex-shrink: 1; /* Allow the container to shrink if necessary */
+    min-height: calc(95vh); /* Set min-height to 100% of viewport height minus 50px (adjust as needed for your menu height) */
+    width: 100vw; /* Set width to 100% of viewport width */
+    height: 85vh;
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+
+}
+
+p {
+    color: var(--dark-color);
+}
+label {
+    color: var(--dark-color);
+    margin-top: 1%;
+}
+
+h1 {
+    color: var(--dark-color);
+}
+
+.msg {
+    color: #E00000 ;
+}
+
+.inputLogIn {
+    border-radius: var(--radius);
+    border-color:  var(--dark-color);
+    background-color: var(--color-1);
+    color: var(--dark-color);
+    /* padding: 16px; */
+
+    font-weight: bold;
+
+
+
+}
+
+.btn1 {
+    font-weight: bold;
+    border: 0;
+
+    border-radius: var(--radius);
+    border-color: var(--dark-color);
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    margin: 1%;
+    padding: 1% 4% 1% 4%;
+
+    cursor: pointer;
+    transition: background-color 0.3s; /* Add transition for smooth color change */
+}
+
+.btn1:hover {
+    background-color: var(--color-2);
+    color: var(--color-1);
+}
+
+.btn2 {
+    font-weight: bold;
+
+    border-radius: var(--radius);
+    border-color: var(--dark-color);
+    border: 0;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    margin: 1%;
+    padding: 1% 4% 1% 4%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.btn2:hover{
+    background-color: var(--color-2);
+    color: var(--color-1);
+
+}
+
+.btn-red {
+    font-weight: bold;
+
+    border-radius: var(--radius);
+    border-color: var(--dark-color);
+    border: 0;
+    background-color: darkred;
+    color: var(--light-color);
+    margin: 1%;
+    padding: 1% 4% 1% 4%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.btn-red:hover{
+    background-color: var(--color-2);
+}
+
+.menuContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    min-height: 6vh;
+    max-height: 12vh;
+    width: 100%;
+    background-color: #ccc; /* Example background color */
+  }
+
+.menu {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.menuBtn{
+    flex: 1;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    font-size: 20px;
+    padding-bottom: 2%;
+    padding-top: 2%;
+    border: 0px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.menuBtn:hover{
+    background-color: var(--color-1);
+}
+
+.menuBtn-selected{
+    flex: 1;
+    background-color: var(--color-2);
+    color: var(--light-color);
+    font-size: 20px;
+    padding-bottom: 2%;
+    padding-top: 2%;
+    border: 0px;
+
+}
+
+
+
+.filterContainer{
+display: flex;
+    padding: 1%;
+
+}
+.inputDate{
+    border-radius: var(--radius);
+    border-color:  var(--light-color);
+    background-color: var(--color-2);
+    color: var(--light-color);
+    padding: 4% 0% 2% 8%;
+
+}
+.tag-input{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 2% 0 2%;
+}
+
+
+
+
+.tableHeader {
+    cursor: pointer;
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-around;
+    border-bottom: 1px solid var(--color-1);
+    background-color: var(--color-1);
+
+}
+
+.tableHeader p{
+    font-weight: bold;
+    color: var(--light-color);
+}
+
+.tableRow {
+    cursor: pointer;
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-around;
+    border-bottom: 1px solid var(--color-1);
+    transition: background-color 0.1s;
+}
+.tableRow:hover{
+
+    background-color: var(--color-1);
+
+}
+
+.tableRow:hover p{
+    color: var(--light-color);
+}
+
+.tableRow2 {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-around;
+    background-color: var(--color-1);
+
+}
+
+
+.pTable{
+    padding: 0%;
+    margin: 0%;
+
+}
+.cell{
+    flex: 1; /* Distribute remaining space evenly among cells */
+    box-sizing: border-box; /* Include padding and border in cell size */
+    text-align: center; /* Optional: Center cell content */
+    padding-top: 1%;
+    padding-bottom: 1%;
+
+}
+
+
+/* Table */
+.table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* Optional: Customize table styles */
+  }
+
+
+
+
+.quickInput{
+    margin: 2%;
+    border-radius: var(--radius);
+    border-color:  var(--light-color);
+    background-color: var(--color-2);
+    color: var(--light-color);
+    padding: 2%;
+
+
+    font-weight: bold;
+}
+
+.container-2{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    margin: 0 0 5% 0 ;
+    align-items: center;
+}
+
+.quickContainer {
+    margin: 4% 0 0 0;
+    width: 50%;
+    padding: 4%;
+    border-radius: var(--radius);
+    background-color: var(--color-1); /* Example background color */
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+
+
+  }
+.quickContainer label{
+    color: var(--light-color);
+}
+
+.tableContainer{
+    width: 90%;
+    box-sizing: border-box;
+    max-height: calc(100vh - 65vh);
+    min-height: 30%;
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+.options{
+    display: flex;
+    height: 10%;
+    width: 50%;
+    align-self: center;
+    justify-content: center;
+
+
+}
+
+/* Landscape mode styles */
+@media only screen and (orientation: landscape) {
+    .menuContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        display: flex;
+
+        min-width: 15vh;
+        width: fit-content;
+        background-color: #ccc; /* Example background color */
+    }
+
+    .menu {
+        height: 100vh;
+
+        display: flex;
+        flex-direction: column; /* Align items in a column */
+    }
+
+    .menuBtn{
+        height: 100vh;
+
+        background-color: var(--dark-color);
+        color: var(--light-color);
+        padding: 5%; /* Adjust padding as needed */
+        text-align: center; /* Center the text horizontally */
+    }
+
+    .quickContainer{
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 1%;
+        margin: 0;
+        border-radius: 0 var(--radius) var(--radius) var(--radius);
+    }
+
+
+    .tableContainer {
+        margin-top: 0px;
+        max-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; /* Enable vertical scrolling if content overflows */
+        flex: 2;
+    }
+    .container {
+        align-self: flex-end;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: var(--light-color);
+        flex-grow: 1; /* Allow the container to grow to fill available space */
+        flex-shrink: 1; /* Allow the container to shrink if necessary */
+        min-height: calc(95vh); /* Set min-height to 100% of viewport height minus 50px (adjust as needed for your menu height) */
+        width: 100vw; /* Set width to 100% of viewport width */
+        height: 100vh;
+
+        overflow-y: auto; /* Enable vertical scrolling if content overflows */
+
+    }
+
+    .container-red {
+        --dark-color: #312222;
+        --color-2: #463939;
+        --color-1: #b50000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: var(--light-color);
+        flex-grow: 1; /* Allow the container to grow to fill available space */
+        flex-shrink: 1; /* Allow the container to shrink if necessary */
+        min-height: calc(95vh); /* Set min-height to 100% of viewport height minus 50px (adjust as needed for your menu height) */
+        width: 100vw; /* Set width to 100% of viewport width */
+        height: 100vh;
+        overflow-y: auto; /* Enable vertical scrolling if content overflows */
+
+    }
+    .container-2{
+        padding-top: 0px;
+        flex-direction: row;
+        margin: 0 4% 0 0;
+        width: 80%;
+        align-self: flex-end;
+        align-items: self-start;
+        overflow-y: none;
+
+    }
+
+    .tag-input{
+        display: flex;
+        flex-direction: column;
+        margin: 0 4% 0 4%;
+        align-items: flex-start;
+        justify-content: flex-end;
+
+    }
+    .inputDate{
+        padding: 4% 0 4% 12%;
+        margin: 1%;
+    }
+    .quickInput{
+        margin: 1%;
+        padding: 8px 0 8px 1%;
+    }
+    .btn2{
+        padding: 4%;
+        margin: 4%;
+    }
+
+}
