@@ -40,9 +40,9 @@ const SignupPage = ()=> {
         }
     };
     useEffect(() => {
-        i18n.changeLanguage(language);
+        i18n.changeLanguage(language).then();
 
-    }, []);
+    }, [language, i18n]);
 
 
     return (
@@ -53,32 +53,42 @@ const SignupPage = ()=> {
             <p>{t("Welcome")}</p>
 
             <p className="msg">{msg}</p>
-            <label htmlFor="email1">{t("Email")}</label>
-            <input
-                value={emailInput}
-                id="email1"
-                className="inputLogIn"
-                onChange={(e) => setEmailInput(e.target.value)}
-                placeholder={t("Email")}
-            />
-            <label htmlFor="password1">{t("Password")}</label>
-            <input
-                type="password"
-                id="password1"
-                className="inputLogIn"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder={t("Password")}
-            />
+            <div className="coolinput">
+                <label htmlFor="email1" className="text">{t('Email')}:</label>
+                <input type="text"
+                       placeholder={'someone@example.com'}
+                       name="email1"
+                       className="input"
+                       value={emailInput}
+                       id="email1"
+
+                       onChange={(e) => setEmailInput(e.target.value)}
+
+                />
+            </div>
+
+            <div className="coolinput">
+                <label htmlFor="password1" className="text">{t("Password")}:</label>
+                <input type="password"
+                       placeholder={'...'}
+                       name="password1"
+                       className="input"
+                       value={passwordInput}
+                       id="password1"
+
+                       onChange={(e) => setPasswordInput(e.target.value)}
+
+                />
+            </div>
             <button
-                className="btn1"
+                className="btn2"
                 onClick={handleSignUpRequest}
             >
                 {t("Sign up")}
 
             </button>
 
-            <p><a href="login">{t("Log in")}</a></p>
+            <p><a href="/login">{t("Log in")}</a></p>
 
 
         </div>

@@ -114,36 +114,53 @@ const QuickFrequentOutcome = ({auth}) => {
     };
 
     return(
-        <div className="quickContainer" >
+        <div className="quickContainer">
 
             <p className="pTable">{msg}</p>
 
-            <input
-                value={nameInput}
-                id="name"
-                className="quickInput"
-                onChange={(e) => setNameInput(e.target.value)}
-                placeholder={t("Name")}
-            />
-            <label for="price">{formatMoney(priceInput)}</label>
-            <input
-                value={priceInput}
-                id="price"
-                className="quickInput"
-                type="number"
-                onChange={(e) => e.target.value >= 0 ? setPriceInput(e.target.value): null}
+            <div className="coolinput">
+                <label htmlFor="name" className="text">Name:</label>
+                <input type="text"
+                       placeholder="Write here..."
+                       name="name"
+                       className="input"
+                       value={nameInput}
+                       id="name"
 
-                placeholder={formatMoney(priceInput)}
-            />
+                       onChange={(e) => setNameInput(e.target.value)}
+
+                />
+            </div>
+
+            <div className="coolinput">
+                <label htmlFor="price" className="text">{t('Price')}: {formatMoney(priceInput)}</label>
+                <input type="number"
+                       placeholder="Write here..."
+                       name="price"
+                       className="input"
+                       value={priceInput}
+                       id="price"
+
+                       onChange={(e) => setPriceInput(e.target.value)}
+
+                />
+            </div>
+
 
             <FrequencySelector/>
-            <input
-                value={categoryInput}
-                id="category"
-                className="quickInput"
-                onChange={(e) => setCategoryInput(e.target.value)}
-                placeholder={t("Uncategorized")}
-            />
+            <div className="coolinput">
+                <label htmlFor="category" className="text">{t('Category')}:</label>
+                <input type="text"
+                       placeholder={t("Write here...")}
+                       name="category"
+                       className="input"
+                       value={categoryInput}
+                       id="category"
+
+                       onChange={(e) => setCategoryInput(e.target.value)}
+
+                />
+            </div>
             <button className="btn2" onClick={newOutcome}>
                 {t("New Frequent Expense")}
             </button>
@@ -161,7 +178,7 @@ const Planner = () => {
     const language = location.state?.language;
     const navigate = useNavigate();
 
-    const { t, i18n } = useTranslation();
+    const {t, i18n} = useTranslation();
 
 
     const current_date = new Date();
@@ -173,11 +190,6 @@ const Planner = () => {
     const [year, setYear] = useState(current_date.getFullYear());
 
     const [monthlyDocs, setMonthlyDocs] = useState(null);
-
-
-
-
-
 
 
     useEffect(() => {

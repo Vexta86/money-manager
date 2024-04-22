@@ -28,7 +28,6 @@ const LoginPage = ()=> {
 
     const handleLoginRequest = async () => {
         try {
-            console.log(emailInput, passwordInput);
             const response = await fetch('http://'+localhost+'/user/login', {
                 method: 'POST',
                 headers: {
@@ -59,8 +58,8 @@ const LoginPage = ()=> {
 
 
     useEffect(() => {
-        i18n.changeLanguage(language);
-    }, [language]);
+        i18n.changeLanguage(language).then();
+    }, [language, i18n]);
     return (
         <div className="container">
 
@@ -70,25 +69,38 @@ const LoginPage = ()=> {
 
             <p className="msg">{msg}</p>
 
-            <label htmlFor="email1">{t('Email')}</label>
 
-            <input
-                value={emailInput}
-                id="email1"
-                className="inputLogIn"
-                onChange={(e) => setEmailInput(e.target.value)}
-                placeholder={t("Email")}
-            />
+            <div className="coolinput">
+                <label htmlFor="email1" className="text">{t('Email')}:</label>
+                <input type="text"
+                       placeholder={'someone@example.com'}
+                       name="email1"
+                       className="input"
+                       value={emailInput}
+                       id="email1"
 
-            <label htmlFor="password1">{t('Password')}</label>
-            <input
-                type="password"
-                id="password1"
-                className="inputLogIn"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder={t("Password")}
-            />
+                       onChange={(e) => setEmailInput(e.target.value)}
+
+                />
+            </div>
+
+            <div className="coolinput">
+                <label htmlFor="password1" className="text">{t("Password")}:</label>
+                <input type="password"
+                       placeholder={'...'}
+                       name="password1"
+                       className="input"
+                       value={passwordInput}
+                       id="password1"
+
+                       onChange={(e) => setPasswordInput(e.target.value)}
+
+                />
+            </div>
+
+
+
+
             <button
                 className="btn1"
                 onClick={handleLoginRequest}

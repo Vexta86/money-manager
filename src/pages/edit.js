@@ -1,10 +1,42 @@
 import React, {useState, useEffect} from "react";
 import {Navigate, useLocation, useNavigate} from 'react-router-dom';
 import './styles.css';
-import {formatMoney, parseToDate, localhost, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat} from "../util";
+import {formatMoney, localhost, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat} from "../util";
 import {useTranslation} from "react-i18next";
 
 
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from "dayjs";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+
+
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#00ADB5',
+            light: '#EEEEEE',
+            dark: '#222831',
+            contrastText: '#fff',
+        }
+    },
+
+});
+
+const themeRed = createTheme({
+    palette: {
+
+        primary: {
+            main: '#b50000',
+            light: '#EEEEEE',
+            dark: '#312222',
+            contrastText: '#fff',
+        }
+    },
+
+});
 
 const EditPage = () => {
 
@@ -24,14 +56,9 @@ const EditPage = () => {
     const navigate = useNavigate();
 
 
-    const current_date = new Date();
     const [authenticated, setAuthenticated] = useState(!!auth); // Set authenticated based on token existence
 
-    const [data, setData] = useState(null);
 
-    const [day, setDay] = useState('')
-    const [month, setMonth] = useState('');
-    const [year, setYear] = useState('');
     const [frequencyInput, setFrequencyInput] = useState(1);
     const [frequencyScale, setFrequencyScale] = useState('Month');
 
@@ -39,6 +66,26 @@ const EditPage = () => {
     const [priceInput, setPriceInput] = useState(10000);
     const [categoryInput, setCategoryInput] = useState('');
     const [msg, setMsg] = useState('');
+
+    const [selectedDate, setSelectedDate] = useState();
+
+
+
+    function AdvanceDateSelector(){
+
+        return(
+            <ThemeProvider theme={type.includes('incomes') ? theme : themeRed}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker label={t('Date')}
+                                value={selectedDate}
+                                views={['day', 'month']}
+
+                                onChange={(newValue) => setSelectedDate(newValue)} />
+                </LocalizationProvider>
+            </ThemeProvider>
+
+        )
+    }
 
     function onDelete(){
         const confirmed = window.confirm(t('Are you sure you want to delete this item?'));
@@ -51,9 +98,7 @@ const EditPage = () => {
                     'Accept': '*/*',
                     'Authorization': auth,
                 },
-            }).then(res => {
-                navigate(-1)
-            })
+            }).then(navigate(-1))
         }
 
 
@@ -104,10 +149,10 @@ const EditPage = () => {
                 "value": frequencyMonth ? frequencyMonth : 1
             })
         }else {
-            const date = `${year}-${month}-${day}`;
+
             newData.push({
                 "propName": "date",
-                "value": date
+                "value": selectedDate
             })
         }
 
@@ -130,77 +175,6 @@ const EditPage = () => {
             }
         })
 
-    }
-    function DateSelector(){
-        return(
-            <div>
-                <p>
-                    {t("Date")}: {parseToDate(day.toString() + '-' + month.toString() + '-' + year.toString(), language)}
-                </p>
-                <div className="filterContainer">
-
-
-                    <div className='tag-input'>
-                        <label htmlFor="day">
-                            {t("Day")}
-                        </label>
-
-                        <input
-                            id="day"
-                            className="inputDate"
-                            type="number"
-                            value={day}
-                            onChange={(e) => e.target.value > -1 && e.target.value <= 31 ? setDay(e.target.value) : null}
-
-                            min={1}
-                            max={31}
-                        />
-
-                    </div>
-                    <div className='tag-input'>
-                        <label htmlFor="month">
-                            {t("Month")}
-                        </label>
-                        <input
-                            id="month"
-                            className="inputDate"
-                            type="number"
-                            value={month}
-                            onChange={(e) => e.target.value > -1 && e.target.value <= 12 ? setMonth(e.target.value) : null}
-
-                            min={1}
-                            max={12}
-                        />
-
-                    </div>
-                    <div className='tag-input'>
-                        <label htmlFor="year">
-                            {t("Year")}
-                        </label>
-                        <input
-                            id="year"
-                            className="inputDate"
-                            type="number"
-                            value={year}
-                            onChange={(e) => e.target.value >= 9 && e.target.value <= 2999 ? setYear(e.target.value) : null}
-                            min={2023}
-                            max={2999}
-                        />
-                    </div>
-
-
-                    <button className='btn2' onClick={() => {
-                        setDay(current_date.getDate());
-                        setMonth(current_date.getMonth() + 1)
-                        setYear(current_date.getFullYear())
-                    }}>
-                        {t("Today")}
-                    </button>
-
-
-                </div>
-            </div>
-        )
     }
 
     function FrequencySelector(){
@@ -272,7 +246,6 @@ const EditPage = () => {
         }).then(data => {
 
 
-            setData(data)
 
             setPriceInput(data.price);
             setCategoryInput(data.category);
@@ -283,11 +256,9 @@ const EditPage = () => {
                 setFrequencyInput(ogFrequency[0]);
                 setFrequencyScale(ogFrequency[1]);
             } else {
-                setYear(data.date.slice(0, 4))
 
-                setMonth(data.date.slice(5, 7))
+                setSelectedDate(dayjs(data.date))
 
-                setDay(data.date.slice(8, 10))
 
             }
 
@@ -295,53 +266,68 @@ const EditPage = () => {
         }).catch(error => {
             setMsg('Error fetching data:', error);
         });
-    }, [auth]);
+    }, [auth, elementID, i18n, isFrequent, language, type]);
 
     if (!authenticated) {
         return <Navigate to='/login'/>;
     }
     return (
         <div>
-            <div className={elementID.includes('incomes') ? 'container' : 'container-red'}>
+            <div className={type.includes('incomes') ? 'container' : 'container-red'}>
                 <h1>
                     {t("Editing")} {nameInput}
                 </h1>
 
                 <p>{msg}</p>
-                <label htmlFor="name">
-                    {t("Name")}
-                </label>
 
-                <input
-                    value={nameInput}
-                    id="name"
-                    className="quickInput"
-                    onChange={(e) => setNameInput(e.target.value)}
-                    placeholder={t("Name")}
-                />
-                { isFrequent ?<FrequencySelector/> :<DateSelector/>}
 
-                <label htmlFor="price">{formatMoney(priceInput)}</label>
-                <input
-                    value={priceInput}
-                    id="price"
-                    className="quickInput"
-                    type="number"
-                    onChange={(e) => e.target.value >= 0 ? setPriceInput(e.target.value) : null}
+                <div className="coolinput">
+                    <label htmlFor="name" className="text">Name:</label>
+                    <input type="text"
+                           placeholder="Write here..."
+                           name="name"
+                           className="input"
+                           value={nameInput}
+                           id="name"
 
-                    placeholder={formatMoney(priceInput)}
-                />
-                <label htmlFor="category">
-                    {t("Category")}
-                </label>
+                           onChange={(e) => setNameInput(e.target.value)}
 
-                <input
-                    value={categoryInput}
-                    id="category"
-                    className="quickInput"
-                    onChange={(e) => setCategoryInput(e.target.value)}
-                    placeholder={categoryInput}
-                />
+                    />
+                </div>
+
+
+                {isFrequent ? <FrequencySelector/> : <AdvanceDateSelector/>}
+
+
+                <div className="coolinput">
+                    <label htmlFor="price" className="text">{t('Price')}: {formatMoney(priceInput)}</label>
+                    <input type="number"
+                           placeholder={t("Write here...")}
+                           name="price"
+                           className="input"
+                           value={priceInput}
+                           id="price"
+
+                           onChange={(e) => setPriceInput(e.target.value)}
+
+                    />
+                </div>
+
+
+                <div className="coolinput">
+                    <label htmlFor="category" className="text">{t('Category')}:</label>
+                    <input type="text"
+                           placeholder={t("Write here...")}
+                           name="category"
+                           className="input"
+                           value={categoryInput}
+                           id="category"
+
+                           onChange={(e) => setCategoryInput(e.target.value)}
+
+                    />
+                </div>
+
 
                 <div className='options'>
                     <button className="btn2" onClick={() => {

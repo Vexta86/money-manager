@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router-dom";
 
 
-const localhost = '192.168.1.4:8000';
+const localhost = '172.31.32.1:8000';
 
 function monthToFormat(givenMonth, language){
 

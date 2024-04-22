@@ -4,7 +4,9 @@
     --color-2: #393E46;
     --color-1: #00ADB5;
 
-    --radius: 12px;
+    --opac-1:rgb(0,173,181,0.2);
+
+    --radius: 8px;
 
 }
 
@@ -16,9 +18,9 @@
     background-color: var(--light-color);
     flex-grow: 1; /* Allow the container to grow to fill available space */
     flex-shrink: 1; /* Allow the container to shrink if necessary */
-    min-height: calc(95vh); /* Set min-height to 100% of viewport height minus 50px (adjust as needed for your menu height) */
+
     width: 100vw; /* Set width to 100% of viewport width */
-    height: 85vh;
+    height: 100vh;
     overflow-y: auto; /* Enable vertical scrolling if content overflows */
 
 }
@@ -26,6 +28,7 @@
     --dark-color: #312222;
     --color-2: #463939;
     --color-1: #b50000;
+    --opac-1: rgba(181, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,7 +37,7 @@
     flex-shrink: 1; /* Allow the container to shrink if necessary */
     min-height: calc(95vh); /* Set min-height to 100% of viewport height minus 50px (adjust as needed for your menu height) */
     width: 100vw; /* Set width to 100% of viewport width */
-    height: 85vh;
+    height: 100vh;
     overflow-y: auto; /* Enable vertical scrolling if content overflows */
 
 }
@@ -170,15 +173,15 @@ h1 {
 
 
 .filterContainer{
-display: flex;
+    display: flex;
     padding: 1%;
+    justify-content: center;
+
+    align-items: flex-end;
 
 }
 .inputDate{
-    border-radius: var(--radius);
-    border-color:  var(--light-color);
-    background-color: var(--color-2);
-    color: var(--light-color);
+
     padding: 4% 0% 2% 8%;
 
 }
@@ -214,13 +217,11 @@ display: flex;
 }
 .tableRow:hover{
 
-    background-color: var(--color-1);
+    background-color: var(--opac-1);
 
 }
 
-.tableRow:hover p{
-    color: var(--light-color);
-}
+
 
 .space{
     display: flex; /* Use flexbox for layout */
@@ -262,33 +263,42 @@ display: flex;
 
 
 
+
+
+
+
+
+
 .quickInput{
     margin: 2%;
+    width: 195px;
+    background-color: transparent;
     border-radius: var(--radius);
-    border-color:  var(--light-color);
-    background-color: var(--color-2);
-    color: var(--light-color);
-    padding: 2%;
+    border-color: var(--color-1);
+    padding: 17px 0 17px 14px;
 
 
-    font-weight: bold;
 }
 
 .container-2{
     display: flex;
     flex-direction: column;
-    height: 100vh;
+
     width: 100%;
-    margin: 0 0 5% 0 ;
+    margin: 2% 0 5% 0 ;
     align-items: center;
 }
 
 .quickContainer {
-    margin: 4% 0 0 0;
-    width: 50%;
+    flex: 1;
+    margin: 0 0 16% 0;
+    width: 70%;
     padding: 4%;
-    border-radius: var(--radius);
-    background-color: var(--color-1); /* Example background color */
+    border: 8px solid var(--color-1);
+    border-top: 0;
+
+    border-radius: 0 0 var(--radius) var(--radius);
+    background-color: var(--light-color); /* Example background color */
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -302,8 +312,8 @@ display: flex;
 .tableContainer{
     width: 90%;
     box-sizing: border-box;
-    max-height: calc(100vh - 65vh);
-    min-height: 30%;
+    max-height: 60vh;
+    flex: 3;
     overflow-y: auto; /* Enable vertical scrolling if content overflows */
 }
 
@@ -351,20 +361,30 @@ display: flex;
         width: auto;
         display: flex;
         flex-direction: column;
+        border: 8px solid var(--color-1);
+
         flex: 1;
         padding: 1%;
         margin: 0;
         border-radius: 0 var(--radius) var(--radius) var(--radius);
     }
 
+    .filterContainer{
+        align-self: center;
 
+        width: 40%;
+        justify-content: space-evenly;
+
+
+    }
     .tableContainer {
-        margin-top: 0px;
+        margin: 0 0 4% 0;
         max-height: 100vh;
+
         display: flex;
         flex-direction: column;
         overflow-y: auto; /* Enable vertical scrolling if content overflows */
-        flex: 2;
+        flex: 3;
     }
     .container {
         align-self: flex-end;
@@ -401,11 +421,11 @@ display: flex;
     .container-2{
         padding-top: 0px;
         flex-direction: row;
-        margin: 0 4% 0 0;
+        margin: 2% 4% 0 0;
         width: 80%;
         align-self: flex-end;
         align-items: self-start;
-        overflow-y: none;
+
 
     }
 

@@ -51,7 +51,7 @@ const HomePage = () => {
         }).catch(error => {
             console.error('Error fetching data:', error);
         });
-    }, [auth, current_date.getMonth(), current_date.getFullYear()]);
+    }, [auth, language]);
 
     if (!authenticated) {
         return <Navigate to='/login' />;

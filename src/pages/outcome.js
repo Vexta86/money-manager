@@ -4,6 +4,11 @@ import { formatMoney, TableRow, parseToDate, localhost} from "../util";
 
 import Menu from './menu'
 import {useTranslation} from "react-i18next";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 
 const QuickOutcome = ({auth}) => {
@@ -50,40 +55,69 @@ const QuickOutcome = ({auth}) => {
 
             <p className="pTable">{msg}</p>
 
-            <input
-                value={nameInput}
-                id="name"
-                className="quickInput"
-                onChange={(e) => setNameInput(e.target.value)}
-                placeholder={t("Name")}
-            />
-            <label for="price">{formatMoney(priceInput)}</label>
-             <input
-                value={priceInput}
-                id="price"
-                className="quickInput"
-                type="number"
-                onChange={(e) => e.target.value >= 0 ? setPriceInput(e.target.value): null}
+            <div className="coolinput">
+                <label htmlFor="name" className="text">{t("Name")}:</label>
+                <input type="text"
+                       placeholder={t("Name") + '...'}
+                       name="name"
+                       className="input"
+                       value={nameInput}
+                       id="name"
 
-                placeholder={formatMoney(priceInput)}
-            /> 
-            <input
-                value={categoryInput}
-                id="category"
-                className="quickInput"
-                onChange={(e) => setCategoryInput(e.target.value)}
-                placeholder={t("Uncategorized")}
-            />
+                       onChange={(e) => setNameInput(e.target.value)}
+
+                />
+            </div>
+
+            <div className="coolinput">
+                <label htmlFor="price" className="text">{t('Price')}: {formatMoney(priceInput)}</label>
+                <input type="number"
+                       placeholder="Write here..."
+                       name="price"
+                       className="input"
+                       value={priceInput}
+                       id="price"
+
+                       onChange={(e) => setPriceInput(e.target.value)}
+
+                />
+            </div>
+
+
+            <div className="coolinput">
+                <label htmlFor="category" className="text">{t('Category')}:</label>
+                <input type="text"
+                       placeholder={t("Uncategorized") + '...'}
+                       name="category"
+                       className="input"
+                       value={categoryInput}
+                       id="category"
+
+                       onChange={(e) => setCategoryInput(e.target.value)}
+
+                />
+            </div>
             <button className="btn2" onClick={newOutcome}>
                 {t("New Expense")}
             </button>
 
-        </div>    
+        </div>
 
     )
 }
 
 
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: '#b50000',
+            light: '#EEEEEE',
+            dark: '#312222',
+            contrastText: '#fff',
+        }
+    },
+
+});
 
 const OutcomePage = () => {
 
@@ -93,7 +127,7 @@ const OutcomePage = () => {
     const auth = location.state?.auth;
     const language = location.state?.language;
 
-    const { t, i18n } = useTranslation();
+    const {t, i18n} = useTranslation();
 
 
     const current_date = new Date();
@@ -108,19 +142,42 @@ const OutcomePage = () => {
     const [monthCategories, setMonthCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
 
+    const [selectedDate, setSelectedDate] = useState(dayjs(current_date));
 
-    function onSelectCategory(category) {
-        console.log(category);
-        setSelectedCategory(category);
+    function FilterMonth() {
+        useEffect(() => {
+            setMonth(selectedDate.month() + 1);
+            setYear(selectedDate.year())
+        }, []);
+        return(
+            <ThemeProvider theme={theme}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker label={t('Month') + '/' + t("Year")}
+                                value={selectedDate}
+                                views={['month', 'year']}
+                                onChange={(newValue) => setSelectedDate(newValue)} />
+                </LocalizationProvider>
+            </ThemeProvider>
+        )
     }
 
+
+    function TableHeader() {
+        let array = [ t('Day'), t('Name'), t('Price')]
+        if (!selectedCategory){
+            array.push(t('Category'))
+        }
+        return(<TableRow elements={array}/>)
+    }
+
+
     useEffect(() => {
-        i18n.changeLanguage(language);
+        i18n.changeLanguage(language).then();
 
         if (!auth) {
             return; // No need to make API call if token doesn't exist
         }
-       
+
         setSelectedCategory('')
         fetch(`http://${localhost}/outcomes?month=${month}&year=${year}`, {
             method: 'GET',
@@ -156,7 +213,7 @@ const OutcomePage = () => {
         }).catch(error => {
             console.error('Error fetching data:', error);
         });
-    }, [auth, month, year, current_date.getMonth(), current_date.getFullYear(), QuickOutcome]);
+    }, [auth, month, year, QuickOutcome]);
 
     if (!authenticated) {
         return <Navigate to='/login' />;
@@ -170,108 +227,79 @@ const OutcomePage = () => {
                 </h1>
 
                 <div className="filterContainer">
+                    <FilterMonth/>
 
+                    <div className="coolinput">
+                        <label htmlFor="category" className="text">{t("Category")}:</label>
+                        <select name="category"
+                                className="input"
+                                value={selectedCategory}
+                                id="category"
 
-                    <div className='tag-input'>
-                        <label htmlFor='filterMonth'>
-                            {t("Month")}
-                        </label>
-
-                        <input
-                            id="filterMonth"
-                            className="inputDate"
-                            type="number"
-                            value={month}
-                            onChange={(e) => e.target.value > -1 && e.target.value <= 12 ? setMonth(e.target.value) : null}
-
-                            min={1}
-                            max={12}
-                        />
-
-                    </div>
-
-
-                    <div className='tag-input'>
-                        <label htmlFor='filterYear'>
-                            {t("Year")}
-                        </label>
-                        <input
-                            id="filterYear"
-                            className="inputDate"
-                            type="number"
-                            value={year}
-                            onChange={(e) => e.target.value >= 9 && e.target.value <= 2999 ? setYear(e.target.value) : null}
-                            min={2023}
-                            max={2999}
-                        />
-                    </div>
-
-
-                    <div className='tag-input'>
-                        <label htmlFor='cats'>
-                            {t("Category")}
-                        </label>
-
-                        <select id="cats" className="inputDate" onChange={(e) => onSelectCategory(e.target.value)}>
-                            {monthCategories.length > 1 || monthCategories.length == 0 ?
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                        >
+                            {monthCategories.length > 1 || monthCategories.length === 0 ?
                                 <option value="">
                                     {t("All categories")}
                                 </option> : null}
                             {monthCategories ? monthCategories.map((item) => {
-                                return <option key={item} value={item}>{item}</option>;
+                                return <option value={item}>{item}</option>;
                             }) : null}
                         </select>
-
                     </div>
 
                 </div>
-
 
 
                 <div className="container-2">
 
                     <div className="tableContainer">
-                            <div className="table">
-                                <TableRow elements={[t('Category'), t('Day'), t('Name'), t('Price')]}/>
-                                {docs ? docs.map(( item) => {
-                                    const array = [item.category, item.date.slice(8, 10), item.name, formatMoney(item.price)];
+                        <div className="table">
+                            <TableHeader/>
 
+                            {docs ? docs.map((item) => {
+                                let array = [item.date.slice(8, 10), item.name, formatMoney(item.price)];
+                                if (!selectedCategory) {
+                                    array.push(item.category)
+                                }
 
-                                    if (selectedCategory === '' || item.category === selectedCategory){
-                                        return <TableRow elements={array}
-                                                         id={item._id}
-                                                         auth={auth}
-                                                         type={'outcomes'}
-                                                         language={language}/>;
-                                    }
+                                if (selectedCategory === '' || item.category === selectedCategory) {
 
-                                }): null}
-                                <TableRow elements={['Total',docs ? formatMoney(docs.reduce((acc, item) => {
-                                    if (selectedCategory !== '' && selectedCategory === item.category) {
-                                        return acc + item.price;
-                                    } else if (selectedCategory === '') {
-                                        return acc + item.price;
-                                    } else {
-                                        return acc; //
-                                    }
-                                }, 0)) : null ]}/>
+                                    return <TableRow elements={array}
+                                                     id={item._id}
+                                                     auth={auth}
+                                                     type={'incomes'}
+                                                     language={language}/>
+                                } else {
+                                    return null
+                                }
 
+                            }) : null}
+                            <TableRow elements={['Total', docs ? formatMoney(docs.reduce((acc, item) => {
+                                if (selectedCategory !== '' && selectedCategory === item.category) {
+                                    return acc + item.price;
+                                } else if (selectedCategory === '') {
+                                    return acc + item.price;
+                                } else {
+                                    return acc; //
+                                }
+                            }, 0)) : null]}/>
 
-                            </div>
                         </div>
-                    
+                    </div>
+
 
                     <QuickOutcome auth={auth}/>
-                    
+
                 </div>
-                
+
                 <div className="menuContainer">
                     <Menu auth={auth} language={language}/>
 
                 </div>
             </div>
         </div>
-        
+
     );
 }
 export default OutcomePage;
