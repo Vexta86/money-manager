@@ -80,7 +80,10 @@ i18n
                     'Frequent Expenses': 'Gastos Frecuentes',
                     'Monthly Price': 'Precio Mensual',
 
-                    'Monthly Budget': 'Presupuesto Mensual'
+                    'Monthly Budget': 'Presupuesto Mensual',
+
+                    'monthly': 'mensualmente',
+                    'every': 'cada',
 
 
 

@@ -8,9 +8,6 @@ import OutcomePage from './pages/outcome';
 import PlannerPage from './pages/planner';
 import EditPage from "./pages/edit";
 function App() {
-  if ( navigator.serviceWorker ) {
-    navigator.serviceWorker.register('./sw.js');
-  }
 
   return (
     <Router>

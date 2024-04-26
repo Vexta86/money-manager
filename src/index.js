@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './i18n'; // Import the i18n instance
 
-import * as serviceWorker from './sw';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

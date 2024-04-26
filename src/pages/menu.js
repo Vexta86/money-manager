@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {useTranslation} from "react-i18next";
+import SvgIcon from '@mui/material/SvgIcon';
+
 
 function Menu({ auth, language }) {
 
@@ -24,6 +26,8 @@ function Menu({ auth, language }) {
                 className={`menuBtn${selectedButton === '/home' ? '-selected' : ''}`}
                 onClick={() => handleButtonClick('/home')}
             >
+                🏠
+                <br/>
                 {t("Home")}
             </button>
 
@@ -31,6 +35,8 @@ function Menu({ auth, language }) {
                 className={`menuBtn${selectedButton === '/income' ? '-selected' : ''}`}
                 onClick={() => handleButtonClick('/income')}
             >
+                📉
+                <br/>
                 {t("Income")}
             </button>
 
@@ -38,6 +44,8 @@ function Menu({ auth, language }) {
                 className={`menuBtn${selectedButton === '/outcome' ? '-selected' : ''}`}
                 onClick={() => handleButtonClick('/outcome')}
             >
+                📈
+                <br/>
                 {t("Expenses")}
             </button>
 
@@ -45,6 +53,8 @@ function Menu({ auth, language }) {
                 className={`menuBtn${selectedButton === '/planner' ? '-selected' : ''}`}
                 onClick={() => handleButtonClick('/planner')}
             >
+                📅
+                <br/>
                 {t("Planner")}
             </button>
         </nav>

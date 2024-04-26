@@ -10,33 +10,17 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Autocomplete from "@mui/material/Autocomplete";
+import {Button} from "@mui/material";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import {theme} from "../config/ThemeMUI";
+import Alert from "@mui/material/Alert";
+import FrequencySelector from "../modules/FrequencySelector";
 
 
 
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: '#00ADB5',
-            light: '#EEEEEE',
-            dark: '#222831',
-            contrastText: '#fff',
-        }
-    },
-
-});
-
-const themeRed = createTheme({
-    palette: {
-
-        primary: {
-            main: '#b50000',
-            light: '#EEEEEE',
-            dark: '#312222',
-            contrastText: '#fff',
-        }
-    },
-
-});
 
 const EditPage = () => {
 
@@ -45,6 +29,7 @@ const EditPage = () => {
     const location = useLocation();
     const auth = location.state?.auth;
     const language = location.state?.language;
+    const categories = location.state?.categories;
 
     const { t, i18n } = useTranslation();
 
@@ -56,11 +41,10 @@ const EditPage = () => {
     const navigate = useNavigate();
 
 
-    const [authenticated, setAuthenticated] = useState(!!auth); // Set authenticated based on token existence
+    const [authenticated, setAuthenticated] = useState(auth); // Set authenticated based on token existence
 
 
-    const [frequencyInput, setFrequencyInput] = useState(1);
-    const [frequencyScale, setFrequencyScale] = useState('Month');
+
 
     const [nameInput, setNameInput] = useState('');
     const [priceInput, setPriceInput] = useState(10000);
@@ -69,20 +53,27 @@ const EditPage = () => {
 
     const [selectedDate, setSelectedDate] = useState();
 
-
+    const [frequencyInput, setFrequencyInput] = useState(1);
+    const [frequencyScale, setFrequencyScale] = useState('Month');
+    function changeFrequencyInput(newInput){
+        setFrequencyInput(newInput);
+    }
+    function changeFrequencyScale(newFrequency){
+        setFrequencyScale(newFrequency);
+    }
 
     function AdvanceDateSelector(){
 
         return(
-            <ThemeProvider theme={type.includes('incomes') ? theme : themeRed}>
+
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker label={t('Date')}
                                 value={selectedDate}
                                 views={['day', 'month']}
 
-                                onChange={(newValue) => setSelectedDate(newValue)} />
+                                onChange={(newValue) => setSelectedDate(dayjs(newValue))} />
                 </LocalizationProvider>
-            </ThemeProvider>
+
 
         )
     }
@@ -105,19 +96,20 @@ const EditPage = () => {
     }
 
     function onSave() {
+
         const newData = [
             {
                 "propName": "name",
-                "value": nameInput ? nameInput : "Name changed"
+                "value": nameInput
             },
             {
                 "propName": "price",
-                "value": priceInput ? priceInput.toString() : "0"
+                "value": priceInput
             },
 
             {
                 "propName": "category",
-                "value": categoryInput ? categoryInput : "none"
+                "value": categoryInput
             },
         ]
         if (isFrequent){
@@ -157,6 +149,7 @@ const EditPage = () => {
         }
 
 
+        console.log(newData);
         fetch(`http://${localhost}/${type}/${elementID}`, {
             method: 'PATCH',
             headers: {
@@ -167,6 +160,7 @@ const EditPage = () => {
             body: JSON.stringify(newData)
         }).then(res=> {
             if (res.ok){
+                setMsg('Successful')
                 alert(t('Changes saved successfully'));
                 navigate(-1);
             }
@@ -177,49 +171,7 @@ const EditPage = () => {
 
     }
 
-    function FrequencySelector(){
 
-
-        return(
-            <div>
-                <p>
-                    {t("Frequency")}
-                </p>
-
-                <div className='filterContainer'>
-                    <input
-                        id="frequency"
-                        className="inputDate"
-                        type="number"
-                        value={frequencyInput}
-                        onChange={(e) => setFrequencyInput(e.target.value) }
-
-                        min={1}
-
-                    />
-                    <select id='frequencyOptions' className="inputDate"
-                            onChange={e => setFrequencyScale(e.target.value)}
-                            value={frequencyScale}>
-                        <option value="Month">
-                            {frequencyInput > 1 ? t('Months') : t('Month')}
-                        </option>
-                        <option value="Day">
-                            {frequencyInput > 1 ? t('Days') : t('Day')}
-                        </option>
-                        <option value="Week">
-                            {frequencyInput > 1 ? t('Weeks') : t('Week')}
-                        </option>
-
-                        <option value="Year">
-                            {frequencyInput > 1 ? t('Years') : t('Year')}
-                        </option>
-                    </select>
-                </div>
-
-
-            </div>
-        )
-    }
 
     useEffect(() => {
         i18n.changeLanguage(language)
@@ -271,78 +223,81 @@ const EditPage = () => {
     if (!authenticated) {
         return <Navigate to='/login'/>;
     }
+
+
+
     return (
         <div>
-            <div className={type.includes('incomes') ? 'container' : 'container-red'}>
+            <div className={'container'}>
                 <h1>
                     {t("Editing")} {nameInput}
                 </h1>
 
-                <p>{msg}</p>
+
+                <ThemeProvider theme={theme}>
+                    {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
+                    <Box
+                        component="form"
+                        sx={{
+                            '& .MuiTextField-root': { m: 1, width: '25ch' },
+                            'display': 'flex',
+                            'flex-direction':'column'
+                        }}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <TextField id="name"
+                                   type="text"
+                                   error={!nameInput}
+                                   label={t("Name")}
+                                   variant="outlined"
+                                   value={nameInput}
+                                   onChange={(e) => setNameInput(e.target.value)}
+
+                        />
+                        {isFrequent ? <FrequencySelector frequencyScale={frequencyScale} frequencyInput={frequencyInput} changeFrequencyScale={changeFrequencyScale} changeFrequencyInput={changeFrequencyInput}/> : <AdvanceDateSelector/>}
+
+                        <TextField id="price"
+                                   type="number"
+                                   label={t("Price") + ' ' + formatMoney(priceInput)}
+                                   variant="outlined"
+                                   value={priceInput}
+                                   error={!priceInput}
+                                   onChange={(e) => setPriceInput(e.target.value)}
+
+                        />
+
+                        <Autocomplete
+                            freeSolo
+                            disablePortal
+                            id="category"
+                            options={categories}
+                            value={categoryInput}
+
+                            onChange={(e, newValue) => setCategoryInput(newValue)}
+                            renderInput={(params) =>
+                                <TextField onChange={(e) => setCategoryInput(e.target.value)} {...params} label="Category"  error={!categoryInput}/>}
+                        />
+                    </Box>
+
+                    <ButtonGroup variant="contained" aria-label="Basic button group">
+                        <Button onClick={() => navigate(-1)} >{t("Cancel")}</Button>
+                        <Button onClick={onDelete} color='error'>️{t("Delete")}</Button>
+                        <Button onClick={onSave} color='success'>{t("Save")}</Button>
+
+                    </ButtonGroup>
+                </ThemeProvider>
 
 
-                <div className="coolinput">
-                    <label htmlFor="name" className="text">Name:</label>
-                    <input type="text"
-                           placeholder="Write here..."
-                           name="name"
-                           className="input"
-                           value={nameInput}
-                           id="name"
-
-                           onChange={(e) => setNameInput(e.target.value)}
-
-                    />
-                </div>
 
 
-                {isFrequent ? <FrequencySelector/> : <AdvanceDateSelector/>}
 
 
-                <div className="coolinput">
-                    <label htmlFor="price" className="text">{t('Price')}: {formatMoney(priceInput)}</label>
-                    <input type="number"
-                           placeholder={t("Write here...")}
-                           name="price"
-                           className="input"
-                           value={priceInput}
-                           id="price"
-
-                           onChange={(e) => setPriceInput(e.target.value)}
-
-                    />
-                </div>
 
 
-                <div className="coolinput">
-                    <label htmlFor="category" className="text">{t('Category')}:</label>
-                    <input type="text"
-                           placeholder={t("Write here...")}
-                           name="category"
-                           className="input"
-                           value={categoryInput}
-                           id="category"
-
-                           onChange={(e) => setCategoryInput(e.target.value)}
-
-                    />
-                </div>
 
 
-                <div className='options'>
-                    <button className="btn2" onClick={() => {
-                        navigate(-1)
-                    }}>
-                        {t("Cancel")}
-                    </button>
-                    <button className="btn-red" onClick={onDelete}>
-                        {t("Delete")}
-                    </button>
-                    <button className="btn2" onClick={onSave}>
-                        {t("Save")}
-                    </button>
 
-                </div>
 
 
             </div>
@@ -350,4 +305,6 @@ const EditPage = () => {
 
     );
 }
+
+
 export default EditPage;

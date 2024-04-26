@@ -8,7 +8,13 @@ import { localhost } from "../util";
 import './styles.css';
 
 import { useTranslation } from 'react-i18next';
-
+import {Button} from "@mui/material";
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import {theme} from "../config/ThemeMUI";
+import ButtonGroup from '@mui/material/ButtonGroup';
+import {ThemeProvider} from "@mui/material/styles";
+import Alert from "@mui/material/Alert";
 
 
 
@@ -46,7 +52,7 @@ const LoginPage = ()=> {
                 // redirects to home page parsing the token
 
                 const auth = 'Bearer ' + jsonData.token;
-                console.log(auth)
+
                 navigate('/home', { state: {auth: auth, language: language}});
 
             }
@@ -65,57 +71,68 @@ const LoginPage = ()=> {
 
             <h1>{t('Money Manager')}</h1>
 
+            <h2>{t('Log in')}</h2>
+
             <p>{t('Welcome back')}</p>
 
-            <p className="msg">{msg}</p>
+
+            <ThemeProvider theme={theme}>
+                {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
+                <Box
+                    component="form"
+                    sx={{
+                        '& .MuiTextField-root': {m: 1, width: '25ch'},
+                        'display': 'flex',
+                        'flex-direction': 'column'
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+
+                    <TextField id="email"
+                               label={t("Email")}
+                               variant="outlined"
+
+                               value={emailInput}
+
+                               onChange={(e) => setEmailInput(e.target.value)}
+                    />
+
+                    <TextField id="password"
+                               label={t("Password")}
+                               variant="outlined"
+
+                               value={passwordInput}
+                               type='password'
+                               onChange={(e) => setPasswordInput(e.target.value)}
+                    />
 
 
-            <div className="coolinput">
-                <label htmlFor="email1" className="text">{t('Email')}:</label>
-                <input type="text"
-                       placeholder={'someone@example.com'}
-                       name="email1"
-                       className="input"
-                       value={emailInput}
-                       id="email1"
+                    <Button variant="contained"
+                            theme={theme}
+                            onClick={handleLoginRequest}
+                    >
+                        {t('Log in')}
+                    </Button>
 
-                       onChange={(e) => setEmailInput(e.target.value)}
-
-                />
-            </div>
-
-            <div className="coolinput">
-                <label htmlFor="password1" className="text">{t("Password")}:</label>
-                <input type="password"
-                       placeholder={'...'}
-                       name="password1"
-                       className="input"
-                       value={passwordInput}
-                       id="password1"
-
-                       onChange={(e) => setPasswordInput(e.target.value)}
-
-                />
-            </div>
+                </Box>
 
 
+            </ThemeProvider>
 
-
-            <button
-                className="btn1"
-                onClick={handleLoginRequest}
-            >
-                {t('Log in')}
-
-            </button>
 
             <p>{t("Don't have an account?")} <a href={`signup?language=${language}`}>{t("Sign up")}</a></p>
 
-            <div className='options'>
-                {/* Language change buttons */}
-                <button className='btn1' onClick={() => setLanguage('en')}>English</button>
-                <button className='btn1' onClick={() => setLanguage('es')}>Español</button>
-            </div>
+
+            <ThemeProvider theme={theme}>
+                <ButtonGroup variant="contained" aria-label="Basic button group">
+                    <Button onClick={() => setLanguage('en')}>English</Button>
+                    <Button onClick={() => setLanguage('es')}>Español</Button>
+
+                </ButtonGroup>
+
+
+            </ThemeProvider>
 
         </div>
     );

@@ -46,7 +46,8 @@ const HomePage = () => {
             setAuthenticated(true);
             return response.json();
         }).then(data => {
-            setUser(data.userData.email.email);
+
+            setUser(data.userData.email);
 
         }).catch(error => {
             console.error('Error fetching data:', error);
@@ -61,7 +62,7 @@ const HomePage = () => {
             <div className="container">
                 <h1>{t("Money Manager")}</h1>
 
-                <p>{t("Hello")} {user.slice(0, user.indexOf('@'))}</p>
+                <p>{t("Hello")} {user.name ? user.name : null}</p>
 
                 <button className="btn1" onClick={()=>{
                     navigate('/login');

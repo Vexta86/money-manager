@@ -2,7 +2,14 @@ import React, {useEffect, useState} from "react";
 import { localhost } from "../util";
 import './styles.css';
 import {useTranslation} from "react-i18next";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import {theme} from "../config/ThemeMUI";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import {Button} from "@mui/material";
+import {ThemeProvider} from "@mui/material/styles";
+import Alert from '@mui/material/Alert';
+
 
 const SignupPage = ()=> {
 
@@ -12,9 +19,12 @@ const SignupPage = ()=> {
     const { t, i18n } = useTranslation();
     const [emailInput, setEmailInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
+    const [nameInput, setNameInput] = useState('')
     const [msg, setMsg] = useState('');
 
+    const navigate = useNavigate();
     const handleSignUpRequest = async () => {
+
         try {
             console.log(emailInput, passwordInput);
             const response = await fetch('http://'+localhost+'/user/signup', {
@@ -27,16 +37,21 @@ const SignupPage = ()=> {
                 body: JSON.stringify({
                     email: emailInput.toLowerCase(),
                     password: passwordInput,
+                    name: nameInput,
                 }),
             });
             const jsonData = await response.json();
-            setMsg(jsonData.message);
+            setMsg(jsonData.message ? jsonData.message : jsonData.error.message);
             if(jsonData.ok){
                 alert(t("Successful signed up"));
+                navigate(-1)
+            } else  {
+                setMsg(jsonData.message ? jsonData.message : jsonData.error.message);
+
             }
         } catch (error) {
-            setMsg("Error");
-            console.error('Error fetching data:', error);
+            setMsg('Server error');
+            console.error('Error fetching data:', error.toString());
         }
     };
     useEffect(() => {
@@ -49,44 +64,65 @@ const SignupPage = ()=> {
         <div className="container">
 
             <h1>{t('Money Manager')}</h1>
+            <h2>{t('Sign up')}</h2>
 
             <p>{t("Welcome")}</p>
 
-            <p className="msg">{msg}</p>
-            <div className="coolinput">
-                <label htmlFor="email1" className="text">{t('Email')}:</label>
-                <input type="text"
-                       placeholder={'someone@example.com'}
-                       name="email1"
-                       className="input"
-                       value={emailInput}
-                       id="email1"
 
-                       onChange={(e) => setEmailInput(e.target.value)}
+            <ThemeProvider theme={theme}>
+                {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
+                <Box
+                    component="form"
+                    sx={{
+                        '& .MuiTextField-root': {m: 1, width: '25ch'},
+                        'display': 'flex',
+                        'flex-direction': 'column'
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
 
-                />
-            </div>
+                    <TextField id="name"
+                               label={t("Name")}
+                               variant="outlined"
+                               error={!nameInput}
 
-            <div className="coolinput">
-                <label htmlFor="password1" className="text">{t("Password")}:</label>
-                <input type="password"
-                       placeholder={'...'}
-                       name="password1"
-                       className="input"
-                       value={passwordInput}
-                       id="password1"
+                               value={nameInput}
 
-                       onChange={(e) => setPasswordInput(e.target.value)}
+                               onChange={(e) => setNameInput(e.target.value)}
+                    />
+                    <TextField id="email"
+                               error={!emailInput}
+                               label={t("Email")}
+                               variant="outlined"
+                               theme={theme}
+                               value={emailInput}
 
-                />
-            </div>
-            <button
-                className="btn2"
-                onClick={handleSignUpRequest}
-            >
-                {t("Sign up")}
+                               onChange={(e) => setEmailInput(e.target.value)}
+                    />
 
-            </button>
+                    <TextField id="password"
+                               error={!passwordInput}
+                               label={t("Password")}
+                               variant="outlined"
+                               theme={theme}
+                               value={passwordInput}
+                               type='password'
+                               onChange={(e) => setPasswordInput(e.target.value)}
+                    />
+
+
+                    <Button variant="contained"
+                            theme={theme}
+                            onClick={handleSignUpRequest}
+                    >
+                        {t('Sign up')}
+                    </Button>
+
+                </Box>
+
+
+            </ThemeProvider>
 
             <p><a href="/login">{t("Log in")}</a></p>
 

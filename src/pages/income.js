@@ -1,113 +1,18 @@
-import React, {useState, useEffect} from "react";
-import { Navigate, useLocation  } from 'react-router-dom';
+import React, {useEffect, useState} from "react";
+import {Navigate, useLocation} from 'react-router-dom';
 import './styles.css';
-import { formatMoney, TableRow, parseToDate, localhost} from "../util";
+import {localhost, parseToDate} from "../util";
+import QuickInput from "../modules/quickInput";
+import Table from "../modules/Table";
 
 import Menu from './menu'
 import {useTranslation} from "react-i18next";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DatePicker} from "@mui/x-date-pickers/DatePicker";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
+
+import {createTheme} from "@mui/material/styles";
 import dayjs from "dayjs";
+import FilterCategory from "../modules/FilterCategory";
+import FilterMonth from "../modules/FilterMonth";
 
-
-const QuickIncome = ({auth}) => {
-
-    const [nameInput, setNameInput] = useState('');
-    const [priceInput, setPriceInput] = useState(10000);
-    const [categoryInput, setCategoryInput] = useState('');
-    const [msg, setMsg] = useState('');
-
-    const { t } = useTranslation();
-
-
-    const newIncome = async () => {
-        try {
-            const response = await fetch(`http://${localhost}/incomes`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': '*/*',
-                    'Authorization': auth,
-                },
-                body: JSON.stringify({
-                    'name': nameInput ? nameInput : 'new income',
-                    'category': categoryInput ? categoryInput : 'none',
-                    'price': priceInput
-                })
-            });
-    
-            if (!response.ok) {
-                console.error('Network response was not ok');
-            }
-    
-            const data = await response.json();
-            setMsg(data.message);
-            window.location.reload();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setMsg('Error occurred while fetching data');
-        }
-    };
-
-    return(
-        <div className="quickContainer">
-
-            <p className="pTable">{msg}</p>
-
-
-            <div className="coolinput">
-                <label htmlFor="name" className="text">{t("Name")}:</label>
-                <input type="text"
-                       placeholder={t("Name") + '...'}
-                       name="name"
-                       className="input"
-                       value={nameInput}
-                       id="name"
-
-                       onChange={(e) => setNameInput(e.target.value)}
-
-                />
-            </div>
-
-            <div className="coolinput">
-                <label htmlFor="price" className="text">{t('Price')}: {formatMoney(priceInput)}</label>
-                <input type="number"
-                       placeholder="Write here..."
-                       name="price"
-                       className="input"
-                       value={priceInput}
-                       id="price"
-
-                       onChange={(e) => setPriceInput(e.target.value)}
-
-                />
-            </div>
-
-
-            <div className="coolinput">
-                <label htmlFor="category" className="text">{t('Category')}:</label>
-                <input type="text"
-                       placeholder={t("Uncategorized") + '...'}
-                       name="category"
-                       className="input"
-                       value={categoryInput}
-                       id="category"
-
-                       onChange={(e) => setCategoryInput(e.target.value)}
-
-                />
-            </div>
-
-            <button className="btn2" onClick={newIncome}>
-                {t("New Income")}
-            </button>
-
-        </div>
-
-    )
-}
 
 const theme = createTheme({
     palette: {
@@ -146,30 +51,23 @@ const IncomePage = () => {
     const [monthCategories, setMonthCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
 
-    function FilterMonth() {
-        useEffect(() => {
-            setMonth(selectedDate.month() + 1);
-            setYear(selectedDate.year())
-        }, []);
-        return(
-            <ThemeProvider theme={theme}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker label={t('Month') + '/' + t("Year")}
-                                value={selectedDate}
-                                views={['month', 'year']}
-                                onChange={(newValue) => setSelectedDate(newValue)} />
-                </LocalizationProvider>
-            </ThemeProvider>
-        )
+
+    async function changeSelectedDate(date) {
+        setSelectedDate(date);
+        const selectedMonth = date.month() + 1;
+        const selectedYear = date.year();
+        setMonth(selectedMonth);
+        setYear(selectedYear);
+
     }
 
-    function TableHeader() {
-        let array = [ t('Day'), t('Name'), t('Price')]
-        if (!selectedCategory){
-            array.push(t('Category'))
-        }
-        return(<TableRow elements={array}/>)
+    async function changeCategory(newCategory) {
+
+        setSelectedCategory(newCategory);
     }
+
+
+
 
 
     useEffect(() => {
@@ -207,7 +105,7 @@ const IncomePage = () => {
             const uniqueCategories = new Set(data.docs.map(i => i.category));
             const uniqueCategoryArray = Array.from(uniqueCategories);
             setMonthCategories(uniqueCategoryArray);
-            
+
 
 
         }).catch(error => {
@@ -227,28 +125,15 @@ const IncomePage = () => {
 
                 <div className="filterContainer">
 
+                    <FilterMonth selectedDate={selectedDate}
+                                 changeDate={changeSelectedDate}/>
+
+                    <FilterCategory selectedCategory={selectedCategory}
+                                    changeCategory={changeCategory}
+                                    monthCategories={monthCategories}    />
 
 
-                    <div className="coolinput">
-                        <label htmlFor="category" className="text">{t("Category")}:</label>
-                        <select name="category"
-                               className="input"
-                               value={selectedCategory}
-                               id="category"
 
-                               onChange={(e) => setSelectedCategory(e.target.value)}
-                        >
-                            {monthCategories.length > 1 || monthCategories.length === 0 ?
-                                <option value="" >
-                                    {t("All categories")}
-                                </option> : null}
-                            {monthCategories ? monthCategories.map((item) => {
-                                return <option value={item}>{item}</option>;
-                            }) : null}
-                        </select>
-                    </div>
-
-                    <FilterMonth/>
 
 
 
@@ -257,43 +142,20 @@ const IncomePage = () => {
 
                 <div className="container-2">
 
-                    <div className="tableContainer">
-                        <div className="table">
-                            <TableHeader/>
 
-                            {docs ? docs.map((item) => {
-                                let array = [ item.date.slice(8, 10), item.name, formatMoney(item.price)];
-                                if (!selectedCategory){
-                                    array.push(item.category)
-                                }
+                    <Table auth={auth}
+                           language={language}
+                           selectedCategory={selectedCategory}
+                           docs={docs}
+                           headers={[t('Day'), t('Name'), t('Price'), t('Category')]}
+                           type={'incomes'}
+                            categories={monthCategories}
+                    />
 
-                                if (selectedCategory === '' || item.category === selectedCategory){
-
-                                    return <TableRow elements={array}
-                                                     id={item._id}
-                                                     auth={auth}
-                                                     type={'incomes'}
-                                                     language={language}/>
-                                } else {
-                                    return null
-                                }
-
-                            }): null}
-                            <TableRow elements={['Total', docs ? formatMoney(docs.reduce((acc, item) => {
-                                if (selectedCategory !== '' && selectedCategory === item.category) {
-                                    return acc + item.price;
-                                } else if (selectedCategory === '') {
-                                    return acc + item.price;
-                                } else {
-                                    return acc; //
-                                }
-                            }, 0)) : null]}/>
-
-                        </div>
-                    </div>
-                    
-
-                    <QuickIncome auth={auth}/>
+                    <QuickInput auth={auth}
+                                type={'incomes'}
+                                categories={monthCategories}
+                    />
 
                 </div>
                 

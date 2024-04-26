@@ -1,123 +1,18 @@
 import React, {useState, useEffect} from "react";
 import { Navigate, useLocation  } from 'react-router-dom';
-import { formatMoney, TableRow, parseToDate, localhost} from "../util";
+import { parseToDate, localhost} from "../util";
 
 import Menu from './menu'
 import {useTranslation} from "react-i18next";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+
 import dayjs from "dayjs";
+import QuickInput from "../modules/quickInput";
+import Table from "../modules/Table";
+import FilterMonth from "../modules/FilterMonth";
+import FilterCategory from "../modules/FilterCategory";
 
 
-const QuickOutcome = ({auth}) => {
 
-    const { t } = useTranslation();
-
-
-    const [nameInput, setNameInput] = useState('');
-    const [priceInput, setPriceInput] = useState(10000);
-    const [categoryInput, setCategoryInput] = useState('');
-    const [msg, setMsg] = useState('');
-
-    const newOutcome = async () => {
-        try {
-            const response = await fetch(`http://${localhost}/outcomes`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': '*/*',
-                    'Authorization': auth,
-                },
-                body: JSON.stringify({
-                    'name': nameInput ? nameInput : 'new outcome',
-                    'category': categoryInput ? categoryInput : 'none',
-                    'price': priceInput
-                })
-            });
-    
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-    
-            const data = await response.json();
-            setMsg(data.message);
-            window.location.reload();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setMsg('Error occurred while fetching data');
-        }
-    };
-
-    return(
-        <div className="quickContainer" >
-
-            <p className="pTable">{msg}</p>
-
-            <div className="coolinput">
-                <label htmlFor="name" className="text">{t("Name")}:</label>
-                <input type="text"
-                       placeholder={t("Name") + '...'}
-                       name="name"
-                       className="input"
-                       value={nameInput}
-                       id="name"
-
-                       onChange={(e) => setNameInput(e.target.value)}
-
-                />
-            </div>
-
-            <div className="coolinput">
-                <label htmlFor="price" className="text">{t('Price')}: {formatMoney(priceInput)}</label>
-                <input type="number"
-                       placeholder="Write here..."
-                       name="price"
-                       className="input"
-                       value={priceInput}
-                       id="price"
-
-                       onChange={(e) => setPriceInput(e.target.value)}
-
-                />
-            </div>
-
-
-            <div className="coolinput">
-                <label htmlFor="category" className="text">{t('Category')}:</label>
-                <input type="text"
-                       placeholder={t("Uncategorized") + '...'}
-                       name="category"
-                       className="input"
-                       value={categoryInput}
-                       id="category"
-
-                       onChange={(e) => setCategoryInput(e.target.value)}
-
-                />
-            </div>
-            <button className="btn2" onClick={newOutcome}>
-                {t("New Expense")}
-            </button>
-
-        </div>
-
-    )
-}
-
-
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: '#b50000',
-            light: '#EEEEEE',
-            dark: '#312222',
-            contrastText: '#fff',
-        }
-    },
-
-});
 
 const OutcomePage = () => {
 
@@ -132,7 +27,7 @@ const OutcomePage = () => {
 
     const current_date = new Date();
     const [authenticated, setAuthenticated] = useState(!!auth); // Set authenticated based on token existence
-    const [user, setUser] = useState("");
+
 
     const [docs, setDocs] = useState(null);
 
@@ -144,32 +39,22 @@ const OutcomePage = () => {
 
     const [selectedDate, setSelectedDate] = useState(dayjs(current_date));
 
-    function FilterMonth() {
-        useEffect(() => {
-            setMonth(selectedDate.month() + 1);
-            setYear(selectedDate.year())
-        }, []);
-        return(
-            <ThemeProvider theme={theme}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker label={t('Month') + '/' + t("Year")}
-                                value={selectedDate}
-                                views={['month', 'year']}
-                                onChange={(newValue) => setSelectedDate(newValue)} />
-                </LocalizationProvider>
-            </ThemeProvider>
-        )
+
+
+    async function changeSelectedDate(date) {
+        setSelectedDate(date);
+        const selectedMonth = date.month() + 1;
+        const selectedYear = date.year();
+        setMonth(selectedMonth);
+        setYear(selectedYear);
+
     }
 
+    async function changeCategory(newCategory) {
 
-    function TableHeader() {
-        let array = [ t('Day'), t('Name'), t('Price')]
-        if (!selectedCategory){
-            array.push(t('Category'))
-        }
-        return(<TableRow elements={array}/>)
+        const selectedCategory = newCategory;
+        setSelectedCategory(selectedCategory);
     }
-
 
     useEffect(() => {
         i18n.changeLanguage(language).then();
@@ -197,7 +82,7 @@ const OutcomePage = () => {
 
         }).then(data => {
 
-            setUser(data.userData.email.email);
+
 
             const orderedDocs = data.docs.sort((a,b)=>{
                 return b.date.localeCompare(a.date);
@@ -213,7 +98,7 @@ const OutcomePage = () => {
         }).catch(error => {
             console.error('Error fetching data:', error);
         });
-    }, [auth, month, year, QuickOutcome]);
+    }, [auth, month, year, selectedDate]);
 
     if (!authenticated) {
         return <Navigate to='/login' />;
@@ -227,69 +112,32 @@ const OutcomePage = () => {
                 </h1>
 
                 <div className="filterContainer">
-                    <FilterMonth/>
+                    <FilterMonth changeDate={changeSelectedDate} selectedDate={selectedDate}/>
 
-                    <div className="coolinput">
-                        <label htmlFor="category" className="text">{t("Category")}:</label>
-                        <select name="category"
-                                className="input"
-                                value={selectedCategory}
-                                id="category"
-
-                                onChange={(e) => setSelectedCategory(e.target.value)}
-                        >
-                            {monthCategories.length > 1 || monthCategories.length === 0 ?
-                                <option value="">
-                                    {t("All categories")}
-                                </option> : null}
-                            {monthCategories ? monthCategories.map((item) => {
-                                return <option value={item}>{item}</option>;
-                            }) : null}
-                        </select>
-                    </div>
+                    <FilterCategory selectedCategory={selectedCategory}
+                                    changeCategory={changeCategory}
+                                    monthCategories={monthCategories}    />
 
                 </div>
 
 
                 <div className="container-2">
 
-                    <div className="tableContainer">
-                        <div className="table">
-                            <TableHeader/>
 
-                            {docs ? docs.map((item) => {
-                                let array = [item.date.slice(8, 10), item.name, formatMoney(item.price)];
-                                if (!selectedCategory) {
-                                    array.push(item.category)
-                                }
-
-                                if (selectedCategory === '' || item.category === selectedCategory) {
-
-                                    return <TableRow elements={array}
-                                                     id={item._id}
-                                                     auth={auth}
-                                                     type={'incomes'}
-                                                     language={language}/>
-                                } else {
-                                    return null
-                                }
-
-                            }) : null}
-                            <TableRow elements={['Total', docs ? formatMoney(docs.reduce((acc, item) => {
-                                if (selectedCategory !== '' && selectedCategory === item.category) {
-                                    return acc + item.price;
-                                } else if (selectedCategory === '') {
-                                    return acc + item.price;
-                                } else {
-                                    return acc; //
-                                }
-                            }, 0)) : null]}/>
-
-                        </div>
-                    </div>
+                    <Table auth={auth}
+                           language={language}
+                           selectedCategory={selectedCategory}
+                           docs={docs}
+                           headers={[t('Day'), t('Name'), t('Price'), t('Category')]}
+                           type={'outcomes'}
+                           categories={monthCategories}
+                    />
 
 
-                    <QuickOutcome auth={auth}/>
+                    <QuickInput auth={auth}
+                                type={'outcomes'}
+                                categories={monthCategories}
+                    />
 
                 </div>
 

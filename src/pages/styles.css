@@ -52,6 +52,7 @@ label {
 
 h1 {
     color: var(--dark-color);
+    font-size: medium;
 }
 
 .msg {
@@ -296,18 +297,16 @@ h1 {
     padding: 4%;
     border: 8px solid var(--color-1);
     border-top: 0;
-
+    background-color: var(--light-color);
     border-radius: 0 0 var(--radius) var(--radius);
-    background-color: var(--light-color); /* Example background color */
+
     align-items: center;
     display: flex;
     flex-direction: column;
 
 
   }
-.quickContainer label{
-    color: var(--light-color);
-}
+
 
 .tableContainer{
     width: 90%;
@@ -358,11 +357,8 @@ h1 {
     }
 
     .quickContainer{
-        width: auto;
-        display: flex;
-        flex-direction: column;
-        border: 8px solid var(--color-1);
 
+        border: 8px solid var(--color-1);
         flex: 1;
         padding: 1%;
         margin: 0;
@@ -371,8 +367,8 @@ h1 {
 
     .filterContainer{
         align-self: center;
+        align-items: center;
 
-        width: 40%;
         justify-content: space-evenly;
 
 

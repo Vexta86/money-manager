@@ -1,7 +1,7 @@
-import {useNavigate} from "react-router-dom";
 
 
-const localhost = '172.31.32.1:8000';
+
+const localhost = '192.168.1.8:8000';
 
 function monthToFormat(givenMonth, language){
 
@@ -115,37 +115,6 @@ function formatMoney(stringNumber) {
 }
 
 // Recibe [category, date, name, price]
-const TableRow  = ({elements, id, auth, type, language})=> {
-
-    const navigate = useNavigate()
-    const editFunction = ()=>{
-        if (auth){
-            navigate('/edit', { state: {auth: auth, language: language, id: id, type: type }});
-        }
-    }
-
-    let rowClass = 'tableRow';
-
-    if (!id){
-        rowClass='tableHeader'
-    } else if(id.includes('space')){
-        rowClass='space'
-    }
-
-    return(
-        <div id={id} className={rowClass} onClick={editFunction}>
 
 
-
-                {elements.map((element, index) => (
-                    <div key={index} className="cell">
-                        <p className="pTable">{element}</p>
-                    </div>
-                ))}
-
-
-
-        </div>)
-}
-
-export {formatMoney, TableRow, parseToDate, localhost, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat};
+export {formatMoney, parseToDate, localhost, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat};
