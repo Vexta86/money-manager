@@ -73,7 +73,7 @@ const QuickInput = ({   auth: auth,
     };
     const newIncome = async () => {
         try {
-            const response = await fetch(`http://${localhost}/${type}`, {
+            const response = await fetch(`${localhost}/${type}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
