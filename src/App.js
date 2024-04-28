@@ -14,14 +14,14 @@ function App() {
       <Routes>
         <Route path='*' element={<HomePage />} />
 
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/signup' element={<SignupPage />} />
+        <Route path='/money-manager/login' element={<LoginPage />} />
+        <Route path='/money-manager/signup' element={<SignupPage />} />
 
-        <Route path='/home' element={<HomePage/>} />
-        <Route path='/income' element={<IncomePage/>} />
-        <Route path='/outcome' element={<OutcomePage/>} />
-        <Route path='/planner' element={<PlannerPage/>} />
-        <Route path='/edit' element={<EditPage/>} />
+        <Route path='/money-manager/home' element={<HomePage/>} />
+        <Route path='/money-manager/income' element={<IncomePage/>} />
+        <Route path='/money-manager/outcome' element={<OutcomePage/>} />
+        <Route path='/money-manager/planner' element={<PlannerPage/>} />
+        <Route path='/money-manager/edit' element={<EditPage/>} />
 
       </Routes>
     </Router>

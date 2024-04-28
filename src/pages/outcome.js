@@ -64,7 +64,7 @@ const OutcomePage = () => {
         }
 
         setSelectedCategory('')
-        fetch(`http://${localhost}/outcomes?month=${month}&year=${year}`, {
+        fetch(`${localhost}/outcomes?month=${month}&year=${year}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ const OutcomePage = () => {
     }, [auth, month, year, selectedDate]);
 
     if (!authenticated) {
-        return <Navigate to='/login' />;
+        return <Navigate to='/money-manager/login' />;
     }
     return (
         <div >

@@ -26,12 +26,12 @@ const HomePage = () => {
 
 
     useEffect(() => {
-        i18n.changeLanguage(language);
+        i18n.changeLanguage(language).then();
         if (!auth) {
             return; // No need to make API call if token doesn't exist
         }
 
-        fetch(`http://${localhost}/incomes?month=${current_date.getMonth() + 1}&year=${current_date.getFullYear()}`, {
+        fetch(`${localhost}/incomes?month=${current_date.getMonth() + 1}&year=${current_date.getFullYear()}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const HomePage = () => {
     }, [auth, language]);
 
     if (!authenticated) {
-        return <Navigate to='/login' />;
+        return <Navigate to='/money-manager/login' />;
     }
     return (
         <div>
@@ -65,7 +65,7 @@ const HomePage = () => {
                 <p>{t("Hello")} {user.name ? user.name : null}</p>
 
                 <button className="btn1" onClick={()=>{
-                    navigate('/login');
+                    navigate('/money-manager/login');
                     setAuth(null);
                 }}>
                     {t("Log out")}

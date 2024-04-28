@@ -34,7 +34,7 @@ const LoginPage = ()=> {
 
     const handleLoginRequest = async () => {
         try {
-            const response = await fetch('http://'+localhost+'/user/login', {
+            const response = await fetch(localhost+'/user/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ const LoginPage = ()=> {
             </ThemeProvider>
 
 
-            <p>{t("Don't have an account?")} <a href={`signup?language=${language}`}>{t("Sign up")}</a></p>
+            <p>{t("Don't have an account?")} <a href={`signup`}>{t("Sign up")}</a></p>
 
 
             <ThemeProvider theme={theme}>

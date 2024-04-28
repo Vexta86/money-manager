@@ -24,7 +24,7 @@ function Menu({ auth, language }) {
         <nav className='menu'>
             <button
                 className={`menuBtn${selectedButton === '/home' ? '-selected' : ''}`}
-                onClick={() => handleButtonClick('/home')}
+                onClick={() => handleButtonClick('/money-manager/home')}
             >
                 🏠
                 <br/>
@@ -33,7 +33,7 @@ function Menu({ auth, language }) {
 
             <button
                 className={`menuBtn${selectedButton === '/income' ? '-selected' : ''}`}
-                onClick={() => handleButtonClick('/income')}
+                onClick={() => handleButtonClick('/money-manager/income')}
             >
                 📉
                 <br/>
@@ -42,7 +42,7 @@ function Menu({ auth, language }) {
 
             <button
                 className={`menuBtn${selectedButton === '/outcome' ? '-selected' : ''}`}
-                onClick={() => handleButtonClick('/outcome')}
+                onClick={() => handleButtonClick('/money-manager/outcome')}
             >
                 📈
                 <br/>
@@ -51,7 +51,7 @@ function Menu({ auth, language }) {
 
             <button
                 className={`menuBtn${selectedButton === '/planner' ? '-selected' : ''}`}
-                onClick={() => handleButtonClick('/planner')}
+                onClick={() => handleButtonClick('/money-manager/planner')}
             >
                 📅
                 <br/>

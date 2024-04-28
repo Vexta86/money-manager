@@ -27,7 +27,7 @@ const SignupPage = ()=> {
 
         try {
             console.log(emailInput, passwordInput);
-            const response = await fetch('http://'+localhost+'/user/signup', {
+            const response = await fetch(localhost+'/user/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

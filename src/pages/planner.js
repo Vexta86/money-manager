@@ -42,7 +42,7 @@ const Planner = () => {
             return; // No need to make API call if token doesn't exist
         }
 
-        fetch(`http://${localhost}/frequent-outcomes`, {
+        fetch(`${localhost}/frequent-outcomes`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const Planner = () => {
     }, [auth, month, year, current_date.getMonth(), current_date.getFullYear()]);
 
     if (!authenticated) {
-        return <Navigate to='/login' />;
+        return <Navigate to='/money-manager/login' />;
     }
     return (
         <div>

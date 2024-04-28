@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -82,7 +82,7 @@ const EditPage = () => {
         const confirmed = window.confirm(t('Are you sure you want to delete this item?'));
 
         if (confirmed){
-            fetch(`http://${localhost}/${type}/${elementID}`,{
+            fetch(`${localhost}/${type}/${elementID}`,{
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ const EditPage = () => {
                 navigate(-1);
             }
             else {
-                setMsg('Somethingw went wrong')
+                setMsg('Something went wrong')
             }
         })
 
@@ -174,7 +174,7 @@ const EditPage = () => {
 
 
     useEffect(() => {
-        i18n.changeLanguage(language)
+        i18n.changeLanguage(language).then();
 
         if (!auth) {
             return; // No need to make API call if token doesn't exist
@@ -221,7 +221,7 @@ const EditPage = () => {
     }, [auth, elementID, i18n, isFrequent, language, type]);
 
     if (!authenticated) {
-        return <Navigate to='/login'/>;
+        return <Navigate to='/money-manager/login'/>;
     }
 
 

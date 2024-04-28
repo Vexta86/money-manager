@@ -8,23 +8,13 @@ import Table from "../modules/Table";
 import Menu from './menu'
 import {useTranslation} from "react-i18next";
 
-import {createTheme} from "@mui/material/styles";
+
 import dayjs from "dayjs";
 import FilterCategory from "../modules/FilterCategory";
 import FilterMonth from "../modules/FilterMonth";
 
 
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: '#00ADB5',
-            light: '#EEEEEE',
-            dark: '#222831',
-            contrastText: '#fff',
-        }
-    },
 
-});
 const IncomePage = () => {
 
     // receives auth as a parameter when redirecting
@@ -77,7 +67,7 @@ const IncomePage = () => {
         }
        
         setSelectedCategory('')
-        fetch(`http://${localhost}/incomes?month=${month}&year=${year}`, {
+        fetch(`${localhost}/incomes?month=${month}&year=${year}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -114,7 +104,7 @@ const IncomePage = () => {
     }, [auth,  month, year]);
 
     if (!authenticated) {
-        return <Navigate to='/login' />;
+        return <Navigate to='/money-manager/login' />;
     }
     return (
         <div >
