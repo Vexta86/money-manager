@@ -53,7 +53,7 @@ const LoginPage = ()=> {
 
                 const auth = 'Bearer ' + jsonData.token;
 
-                navigate('/home', { state: {auth: auth, language: language}});
+                navigate('/money-manager/home', { state: {auth: auth, language: language}});
 
             }
         } catch (error) {
@@ -61,6 +61,8 @@ const LoginPage = ()=> {
             console.error('Error fetching data:', error);
         }
     };
+
+
 
 
     useEffect(() => {
@@ -121,7 +123,10 @@ const LoginPage = ()=> {
             </ThemeProvider>
 
 
-            <p>{t("Don't have an account?")} <a href={`signup`}>{t("Sign up")}</a></p>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <p>{t("Don't have an account?")} <a onClick={()=>{
+                navigate('/money-manager/signup');
+            }}>{t("Sign up")}</a></p>
 
 
             <ThemeProvider theme={theme}>

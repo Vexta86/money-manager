@@ -150,7 +150,7 @@ const EditPage = () => {
 
 
         console.log(newData);
-        fetch(`http://${localhost}/${type}/${elementID}`, {
+        fetch(`${localhost}/${type}/${elementID}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ const EditPage = () => {
             return; // No need to make API call if token doesn't exist
         }
 
-        fetch(`http://${localhost}/${type}/${elementID}`, {
+        fetch(`${localhost}/${type}/${elementID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

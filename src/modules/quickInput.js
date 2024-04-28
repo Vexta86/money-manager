@@ -44,7 +44,7 @@ const QuickInput = ({   auth: auth,
             frequencyMonth = (frequencyInput);
         }
         try {
-            const response = await fetch(`http://${localhost}/frequent-outcomes`, {
+            const response = await fetch(`${localhost}/frequent-outcomes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

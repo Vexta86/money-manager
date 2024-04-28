@@ -16,6 +16,8 @@ const SignupPage = ()=> {
     const location = useLocation();
     const language = new URLSearchParams(location.search).get('language');
 
+
+
     const { t, i18n } = useTranslation();
     const [emailInput, setEmailInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
@@ -124,7 +126,10 @@ const SignupPage = ()=> {
 
             </ThemeProvider>
 
-            <p><a href="/login">{t("Log in")}</a></p>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <p> <a onClick={()=>{
+                navigate('/money-manager/login')
+            }}>{t("Log in")}</a></p>
 
 
         </div>

@@ -9,7 +9,7 @@ const TableRow  = ({elements, id, auth, type, language, categories})=> {
     const navigate = useNavigate()
     const editFunction = ()=>{
         if (auth){
-            navigate('/edit', { state: {
+            navigate('/money-manager/edit', { state: {
                     categories: categories,
                     auth: auth,
                     language: language,
