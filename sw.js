@@ -72,29 +72,10 @@ self.addEventListener('activate', e=>{
 });
 
 // eslint-disable-next-line no-restricted-globals
-self.addEventListener('fetch', e=>{
-    // cache with network fallback
+self.addEventListener('fetch', event => {
+    console.log(event.request.url)
+    console.log('w')
+    event.respondWith(event.request);
+});
 
 
-
-    const cacheWithNetworkFallback = caches.match(e.request)
-        .then( res => {
-            if (res) {
-
-                return res
-            } else  {
-                return fetch(e.request).then(newRes => {
-                    return updateDynamicCache(CACHE_DYNAMIC_NAME, e.request, newRes);
-                })
-            }
-
-
-
-        })
-
-
-
-
-    e.respondWith(cacheWithNetworkFallback);
-
-})
