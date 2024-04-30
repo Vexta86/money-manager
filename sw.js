@@ -73,8 +73,7 @@ self.addEventListener('activate', e=>{
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', event => {
-    console.log(event.request.url)
-    console.log('w')
+
     event.respondWith(event.request);
 });
 
