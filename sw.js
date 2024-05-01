@@ -32,9 +32,7 @@ function savePost( body, url, auth) {
     return db.put(body).then(()=>{
 
         // eslint-disable-next-line no-restricted-globals
-        self.registration.sync.register('new-post').then(()=>{
-            postInputs().catch(err=>console.error)
-        });
+        self.registration.sync.register('new-post').catch(err => console.error('Could not register the task', err))
 
         const tempRes = { ok: true, offline: true};
 
@@ -92,7 +90,8 @@ function apiHandler(cacheName, req){
         if (req.clone().url.includes('login') || req.clone().url.includes('signup')){
             return fetch(req)
         } else {
-            if(window.navigator.onLine){
+            // eslint-disable-next-line no-restricted-globals
+            if(self.navigator.onLine){
                 return fetch(req);
             } else {
                 // eslint-disable-next-line no-restricted-globals
