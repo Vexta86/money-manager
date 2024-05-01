@@ -29,29 +29,32 @@ function savePost( body, url, auth) {
     body.url = url;
     body.auth = auth;
 
-    return db.put(body).then(()=>{
-
-        // eslint-disable-next-line no-restricted-globals
-        return self.registration.sync.register('new-post')
-            .then(()=>{
-                const tempRes = { ok: true, offline: true};
-
-                return new Response(JSON.stringify(tempRes));
-            })
-            .catch(err => console.error('Could not register the task', err))
-
-
-
-
-    })
+    return db.put(body)
+        .then(() => {
+            // eslint-disable-next-line no-restricted-globals
+            return self.registration.sync.register('new-post')
+                .then(() => {
+                    console.log('Task saved successfully');
+                    const tempRes = { ok: true, offline: true };
+                    return new Response(JSON.stringify(tempRes));
+                })
+                .catch(err => {
+                    console.error('Could not register the task', err);
+                    // Handle the error and return an appropriate response
+                    const errorRes = { ok: false, error: err.message };
+                    return new Response(JSON.stringify(errorRes), { status: 500 });
+                });
+        })
+        .catch(dbErr => {
+            console.error('Could not save the post to the database', dbErr);
+            // Handle the database error and return an appropriate response
+            const errorRes = { ok: false, offline: true, error: dbErr.message };
+            return new Response(JSON.stringify(errorRes), { status: 500 });
+        });
 }
 
 function postInputs() {
-
     const posts = [];
-
-
-
     return db.allDocs({include_docs: true}).then(docs => {
         docs.rows.forEach(row => {
             const doc = row.doc;
@@ -75,8 +78,10 @@ function postInputs() {
                 }).then(res => {
                     if (!res.ok) {
                         throw new Error('Failed to post data');
+                    } else {
+                        return db.remove(doc);
                     }
-                    return db.remove(doc);
+
 
                 }).catch(err => {
                     console.error('Error posting data:', err);
@@ -247,9 +252,9 @@ self.addEventListener('fetch', e => {
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('sync', e =>{
-    console.log('Back online')
+    console.log('Sync...')
     if ( e.tag === 'new-post' ){
-        console.log('In the tas of posting')
+
         const response = postInputs();
         e.waitUntil(response);
     }
