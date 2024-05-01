@@ -32,11 +32,15 @@ function savePost( body, url, auth) {
     return db.put(body).then(()=>{
 
         // eslint-disable-next-line no-restricted-globals
-        self.registration.sync.register('new-post').catch(err => console.error('Could not register the task', err))
+        return self.registration.sync.register('new-post')
+            .then(()=>{
+                const tempRes = { ok: true, offline: true};
 
-        const tempRes = { ok: true, offline: true};
+                return new Response(JSON.stringify(tempRes));
+            })
+            .catch(err => console.error('Could not register the task', err))
 
-        return new Response(JSON.stringify(tempRes));
+
 
 
     })
