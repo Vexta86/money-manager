@@ -14,12 +14,12 @@ const FilterCategory = ({   selectedCategory: selectedCategory,
     return(
         <ThemeProvider theme={theme}>
             <FormControl fullWidth>
-                <InputLabel id="select-category-label">Category</InputLabel>
+                <InputLabel id="select-category-label">{t("Category")}</InputLabel>
                 <Select
                     labelId="select-category-label"
                     id="select-category"
                     value={selectedCategory}
-                    label="Category"
+                    label={"Category"}
                     onChange={(e) => changeCategory(e.target.value)}
                 >
 

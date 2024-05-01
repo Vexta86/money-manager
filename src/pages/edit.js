@@ -13,11 +13,12 @@ import { ThemeProvider } from '@mui/material/styles';
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import {theme} from "../config/ThemeMUI";
 import Alert from "@mui/material/Alert";
 import FrequencySelector from "../modules/FrequencySelector";
+import OnlineChecker from "../modules/OnlineChecker";
 
 
 
@@ -55,6 +56,8 @@ const EditPage = () => {
 
     const [frequencyInput, setFrequencyInput] = useState(1);
     const [frequencyScale, setFrequencyScale] = useState('Month');
+
+    const [isLoading, setIsLoading] = useState(true);
     function changeFrequencyInput(newInput){
         setFrequencyInput(newInput);
     }
@@ -171,7 +174,58 @@ const EditPage = () => {
 
     }
 
+    function Content(){
+        return(<div className={'container'}> <Box
+            component="form"
+            sx={{
+                '& .MuiTextField-root': { m: 1, width: '25ch' },
+                'display': 'flex',
+                'flex-direction':'column'
+            }}
+            noValidate
+            autoComplete="off"
+        >
+            <TextField id="name"
+                       type="text"
+                       error={!nameInput}
+                       label={t("Name")}
+                       variant="outlined"
+                       value={nameInput}
+                       onChange={(e) => setNameInput(e.target.value)}
 
+            />
+            {isFrequent ? <FrequencySelector frequencyScale={frequencyScale} frequencyInput={frequencyInput} changeFrequencyScale={changeFrequencyScale} changeFrequencyInput={changeFrequencyInput}/> : <AdvanceDateSelector/>}
+
+            <TextField id="price"
+                       type="number"
+                       label={t("Price") + ' ' + formatMoney(priceInput)}
+                       variant="outlined"
+                       value={priceInput}
+                       error={!priceInput}
+                       onChange={(e) => setPriceInput(e.target.value)}
+
+            />
+
+            <Autocomplete
+                freeSolo
+                disablePortal
+                id="category"
+                options={categories}
+                value={categoryInput}
+
+                onChange={(e, newValue) => setCategoryInput(newValue)}
+                renderInput={(params) =>
+                    <TextField onChange={(e) => setCategoryInput(e.target.value)} {...params} label="Category"  error={!categoryInput}/>}
+            />
+        </Box>
+
+            <ButtonGroup variant="contained" aria-label="Basic button group">
+                <Button onClick={() => navigate(-1)} >{t("Cancel")}</Button>
+                <Button onClick={onDelete} color='error'>️{t("Delete")}</Button>
+                <Button onClick={onSave} color='success'>{t("Save")}</Button>
+
+            </ButtonGroup></div>)
+    }
 
     useEffect(() => {
         i18n.changeLanguage(language).then();
@@ -179,7 +233,7 @@ const EditPage = () => {
         if (!auth) {
             return; // No need to make API call if token doesn't exist
         }
-
+        setIsLoading(true)
         fetch(`${localhost}/${type}/${elementID}`, {
             method: 'GET',
             headers: {
@@ -214,10 +268,13 @@ const EditPage = () => {
 
             }
 
-
+            setIsLoading(false)
         }).catch(error => {
             setMsg('Error fetching data:', error);
+            setIsLoading(false);
+
         });
+
     }, [auth, elementID, i18n, isFrequent, language, type]);
 
     if (!authenticated) {
@@ -232,60 +289,15 @@ const EditPage = () => {
                 <h1>
                     {t("Editing")} {nameInput}
                 </h1>
+                <OnlineChecker/>
 
 
                 <ThemeProvider theme={theme}>
+
+                    {isLoading ? <CircularProgress /> : <Content/>}
+
                     {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
-                    <Box
-                        component="form"
-                        sx={{
-                            '& .MuiTextField-root': { m: 1, width: '25ch' },
-                            'display': 'flex',
-                            'flex-direction':'column'
-                        }}
-                        noValidate
-                        autoComplete="off"
-                    >
-                        <TextField id="name"
-                                   type="text"
-                                   error={!nameInput}
-                                   label={t("Name")}
-                                   variant="outlined"
-                                   value={nameInput}
-                                   onChange={(e) => setNameInput(e.target.value)}
 
-                        />
-                        {isFrequent ? <FrequencySelector frequencyScale={frequencyScale} frequencyInput={frequencyInput} changeFrequencyScale={changeFrequencyScale} changeFrequencyInput={changeFrequencyInput}/> : <AdvanceDateSelector/>}
-
-                        <TextField id="price"
-                                   type="number"
-                                   label={t("Price") + ' ' + formatMoney(priceInput)}
-                                   variant="outlined"
-                                   value={priceInput}
-                                   error={!priceInput}
-                                   onChange={(e) => setPriceInput(e.target.value)}
-
-                        />
-
-                        <Autocomplete
-                            freeSolo
-                            disablePortal
-                            id="category"
-                            options={categories}
-                            value={categoryInput}
-
-                            onChange={(e, newValue) => setCategoryInput(newValue)}
-                            renderInput={(params) =>
-                                <TextField onChange={(e) => setCategoryInput(e.target.value)} {...params} label="Category"  error={!categoryInput}/>}
-                        />
-                    </Box>
-
-                    <ButtonGroup variant="contained" aria-label="Basic button group">
-                        <Button onClick={() => navigate(-1)} >{t("Cancel")}</Button>
-                        <Button onClick={onDelete} color='error'>️{t("Delete")}</Button>
-                        <Button onClick={onSave} color='success'>{t("Save")}</Button>
-
-                    </ButtonGroup>
                 </ThemeProvider>
 
 

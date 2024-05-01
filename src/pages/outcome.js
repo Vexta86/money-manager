@@ -11,6 +11,11 @@ import Table from "../modules/Table";
 import FilterMonth from "../modules/FilterMonth";
 import FilterCategory from "../modules/FilterCategory";
 
+import {ThemeProvider} from "@mui/material/styles";
+import {themeRed} from "../config/ThemeMUI";
+import LinearProgress from "@mui/material/LinearProgress";
+
+
 
 
 
@@ -39,7 +44,7 @@ const OutcomePage = () => {
 
     const [selectedDate, setSelectedDate] = useState(dayjs(current_date));
 
-
+    const [isLoading, setIsLoading] = useState(true);
 
     async function changeSelectedDate(date) {
         setSelectedDate(date);
@@ -56,14 +61,8 @@ const OutcomePage = () => {
         setSelectedCategory(selectedCategory);
     }
 
-    useEffect(() => {
-        i18n.changeLanguage(language).then();
-
-        if (!auth) {
-            return; // No need to make API call if token doesn't exist
-        }
-
-        setSelectedCategory('')
+    function fetchOutcomes() {
+        setIsLoading(true)
         fetch(`${localhost}/outcomes?month=${month}&year=${year}`, {
             method: 'GET',
             headers: {
@@ -88,17 +87,32 @@ const OutcomePage = () => {
                 return b.date.localeCompare(a.date);
             })
             setDocs(orderedDocs)
-            
+
             const uniqueCategories = new Set(data.docs.map(i => i.category));
             const uniqueCategoryArray = Array.from(uniqueCategories);
             setMonthCategories(uniqueCategoryArray);
-            
 
+            setIsLoading(false)
 
         }).catch(error => {
             console.error('Error fetching data:', error);
         });
-    }, [auth, month, year, selectedDate]);
+    }
+
+    useEffect(() => {
+        i18n.changeLanguage(language).then();
+
+        if (!auth) {
+            return; // No need to make API call if token doesn't exist
+        }
+
+        setSelectedCategory('')
+
+    }, [auth]);
+
+    useEffect(() => {
+        fetchOutcomes();
+    }, [selectedDate, selectedCategory]);
 
     if (!authenticated) {
         return <Navigate to='/money-manager/login' />;
@@ -122,21 +136,29 @@ const OutcomePage = () => {
 
 
                 <div className="container-2">
+                    <ThemeProvider theme={themeRed}>
+                    <div style={{width:"90%"}}>
+
+                        {isLoading ?
+                            <LinearProgress/> :
+                            <Table auth={auth}
+                                   language={language}
+                                   selectedCategory={selectedCategory}
+                                   docs={docs}
+                                   headers={[t('Day'), t('Expenses'), t('Price'), t('Category')]}
+                                   type={'outcomes'}
+                                   categories={monthCategories}
+                        />}
 
 
-                    <Table auth={auth}
-                           language={language}
-                           selectedCategory={selectedCategory}
-                           docs={docs}
-                           headers={[t('Day'), t('Name'), t('Price'), t('Category')]}
-                           type={'outcomes'}
-                           categories={monthCategories}
-                    />
+                    </div>
+                    </ThemeProvider>
 
 
                     <QuickInput auth={auth}
                                 type={'outcomes'}
                                 categories={monthCategories}
+                                refreshData={fetchOutcomes}
                     />
 
                 </div>

@@ -24,6 +24,20 @@
     overflow-y: auto; /* Enable vertical scrolling if content overflows */
 
 }
+
+.frequent-container{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    flex-grow: 1; /* Allow the container to grow to fill available space */
+    flex-shrink: 1; /* Allow the container to shrink if necessary */
+    max-height: 60vh;
+    width:90%;
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+
+}
+
 .container-red {
     --dark-color: #312222;
     --color-2: #463939;
@@ -285,7 +299,7 @@ h1 {
     flex-direction: column;
 
     width: 100%;
-    margin: 2% 0 5% 0 ;
+    justify-content: center;
     align-items: center;
 }
 
@@ -308,7 +322,8 @@ h1 {
 
 
 .tableContainer{
-    width: 90%;
+    width: 100%;
+    align-self: center;
     box-sizing: border-box;
     max-height: 60vh;
     flex: 3;
@@ -375,7 +390,7 @@ h1 {
     .tableContainer {
         margin: 0 0 4% 0;
         max-height: 100vh;
-
+        width: 100%;
         display: flex;
         flex-direction: column;
         overflow-y: auto; /* Enable vertical scrolling if content overflows */
@@ -414,7 +429,7 @@ h1 {
 
     }
     .container-2{
-        padding-top: 0px;
+        padding-top: 0;
         flex-direction: row;
         margin: 2% 4% 0 0;
         width: 80%;
@@ -444,5 +459,15 @@ h1 {
         padding: 4%;
         margin: 4%;
     }
+    .frequent-container{
+        display: flex;
+        flex-grow: 1; /* Allow the container to grow to fill available space */
+        flex-shrink: 1; /* Allow the container to shrink if necessary */
+        width: 100%;
 
+
+
+        overflow-y: auto; /* Enable vertical scrolling if content overflows */
+
+    }
 }

@@ -9,12 +9,13 @@ import TextField from "@mui/material/TextField";
 import {Button} from "@mui/material";
 import {ThemeProvider} from "@mui/material/styles";
 import Alert from '@mui/material/Alert';
+import LinearProgress from "@mui/material/LinearProgress";
 
 
 const SignupPage = ()=> {
 
     const location = useLocation();
-    const language = new URLSearchParams(location.search).get('language');
+    const language = location.state?.language;
 
 
 
@@ -25,42 +26,46 @@ const SignupPage = ()=> {
     const [msg, setMsg] = useState('');
 
     const navigate = useNavigate();
+
+    const [isLoading, setIsLoading] = useState(false);
     const handleSignUpRequest = async () => {
-
-        try {
-            console.log(emailInput, passwordInput);
-            const response = await fetch(localhost+'/user/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': '*/*'
-                    // Add any other headers as needed
-                },
-                body: JSON.stringify({
-                    email: emailInput.toLowerCase(),
-                    password: passwordInput,
-                    name: nameInput,
-                }),
-            });
-            const jsonData = await response.json();
-            setMsg(jsonData.message ? jsonData.message : jsonData.error.message);
-            if(jsonData.ok){
+        setIsLoading(true)
+        fetch(localhost+'/user/signup',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': '*/*'
+                        // Add any other headers as needed
+                    },
+                    body: JSON.stringify({
+                        email: emailInput.toLowerCase(),
+                        password: passwordInput,
+                        name: nameInput,
+                    }),
+                }).then(res=>{
+                    return res.json()
+        }).then(data => {
+            setIsLoading(false)
+            if (data.ok){
                 alert(t("Successful signed up"));
-                navigate(-1)
-            } else  {
-                setMsg(jsonData.message ? jsonData.message : jsonData.error.message);
-
+                navigate(-1);
             }
-        } catch (error) {
-            setMsg('Server error');
-            console.error('Error fetching data:', error.toString());
-        }
+            setMsg(data.message ? data.message : data.error.message);
+
+        }).catch(err => {
+            console.log(err)
+        })
+
     };
     useEffect(() => {
         i18n.changeLanguage(language).then();
+        console.log(language)
 
     }, [language, i18n]);
 
+    useEffect(()=> {
+        setMsg('')
+    }, [emailInput, nameInput, passwordInput])
 
     return (
         <div className="container">
@@ -72,13 +77,26 @@ const SignupPage = ()=> {
 
 
             <ThemeProvider theme={theme}>
-                {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
+
+                <Box sx={{width:"35%"}}>
+                    {msg ?
+                        <Alert severity={msg.includes('success') ? "success" : "error"}>
+                            {t(msg)}
+                        </Alert> :
+                        null}
+                    {isLoading ?
+                        <LinearProgress/> :
+                        null
+                    }
+
+                </Box>
+
                 <Box
                     component="form"
                     sx={{
                         '& .MuiTextField-root': {m: 1, width: '25ch'},
                         'display': 'flex',
-                        'flex-direction': 'column'
+                        'flexDirection': 'column'
                     }}
                     noValidate
                     autoComplete="off"
@@ -127,8 +145,8 @@ const SignupPage = ()=> {
             </ThemeProvider>
 
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <p> <a onClick={()=>{
-                navigate('/money-manager/login')
+            <p> <a style={{color: "blue", cursor: "pointer", textDecoration: "underline"}} onClick={()=>{
+                navigate('/money-manager/login', { state: {language: language}})
             }}>{t("Log in")}</a></p>
 
 

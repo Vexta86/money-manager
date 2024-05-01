@@ -2,7 +2,7 @@ import {formatMoney, monthToFormat} from "../util";
 import React from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
-
+import dayjs from "dayjs";
 
 const TableRow  = ({elements, id, auth, type, language, categories})=> {
 
@@ -99,7 +99,7 @@ const Table = ({   auth: auth,
                 {docs ? docs.map((item) => {
                     let array = [];
                     if(item.date){
-                        array.push(item.date.slice(8, 10))
+                        array.push(dayjs(item.date).date())
                     }
 
                     if(item.name){
@@ -111,10 +111,10 @@ const Table = ({   auth: auth,
 
                         if(freq[0] === 1 && freq[1].includes('Month')){
                             array.push('')
-                            array.push(`${formatMoney(item.price/item.frequency)} ${t('monthly')}`)
+                            array.push(`${formatMoney(item.price/item.frequency)}`)
                         }else   {
-                            array.push(`${freqPrice} ${t('every')} ${freq[0]} ${t(freq[1])}`)
-                            array.push(`${formatMoney(item.price/item.frequency)} ${t('monthly')}`)
+                            array.push(`${freqPrice} ${t('every')} ${freq[0] > 1 ? freq[0] : ''} ${t(freq[1])}`)
+                            array.push(`${formatMoney(item.price/item.frequency)}`)
                         }
 
 

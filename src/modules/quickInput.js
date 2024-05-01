@@ -1,19 +1,21 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {daysToMonths, formatMoney, localhost, weeksToMonths, yearsToMonths} from "../util";
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
+
 import Autocomplete from '@mui/material/Autocomplete';
-import {Button, FormControl} from "@mui/material";
+import {Button} from "@mui/material";
 import {theme, themeRed} from "../config/ThemeMUI";
 import {ThemeProvider} from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import FrequencySelector from "./FrequencySelector";
-import frequencySelector from "./FrequencySelector";
+import OnlineChecker from "./OnlineChecker";
+
 const QuickInput = ({   auth: auth,
                         type: type,
                         categories: categories,
+                        refreshData: refreshData
                         }) =>{
 
     const [nameInput, setNameInput] = useState('');
@@ -43,71 +45,69 @@ const QuickInput = ({   auth: auth,
         } else if (frequencyScale === 'Month'){
             frequencyMonth = (frequencyInput);
         }
-        try {
-            const response = await fetch(`${localhost}/frequent-outcomes`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': '*/*',
-                    'Authorization': auth,
-                },
-                body: JSON.stringify({
-                    'name': nameInput ? nameInput : 'new outcome',
-                    'category': categoryInput ? categoryInput : 'none',
-                    'frequency': frequencyMonth ? frequencyMonth : 1,
-                    'price': priceInput ? priceInput : 1
-                })
-            });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        fetch(`${localhost}/frequent-outcomes`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': '*/*',
+                        'Authorization': auth,
+                    },
+                    body: JSON.stringify({
+                        'name': nameInput ? nameInput : 'new outcome',
+                        'category': categoryInput ? categoryInput : 'none',
+                        'frequency': frequencyMonth ? frequencyMonth : 1,
+                        'price': priceInput ? priceInput : 1
+                    })
+        }).then(res => {
+            if(!res.ok){
+                setMsg('Network response was not ok');
+            } else {
+                setMsg('Successful');
+
+                refreshData();
             }
+        }).catch(err => {
+            console.error(err);
+            setMsg('Something went wrong');
+        })
 
-            const data = await response.json();
-            setMsg(data.message);
-            window.location.reload();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setMsg('Error occurred while fetching data');
-        }
     };
     const newIncome = async () => {
-        try {
-            const response = await fetch(`${localhost}/${type}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': '*/*',
-                    'Authorization': auth,
-                },
-                body: JSON.stringify({
-                    'name': nameInput ? nameInput : type.includes('income') ? t("New Income") : t('New Expense'),
-                    'category': categoryInput ? categoryInput : 'none',
-                    'price': priceInput
-                })
-            });
+        fetch(`${localhost}/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': '*/*',
+                        'Authorization': auth,
+                    },
+                    body: JSON.stringify({
+                        'name': nameInput ? nameInput : type.includes('income') ? t("New Income") : t('New Expense'),
+                        'category': categoryInput ? categoryInput : 'none',
+                        'price': priceInput
+                    })
+                }).then(res=>{
+                    if(!res.ok){
+                        console.error('Network response was not ok', res);
+                        setMsg('Network response was not ok');
+                    } else {
+                        setMsg('Successful');
 
-            if (!response.ok) {
-                console.error('Network response was not ok');
-            }
-            const data = await response.json();
-            if (response.ok){
-
-
-
-                console.log(data);
-                window.location.reload();
-            } else {
-
-                setMsg(data.message);
-            }
+                        refreshData();
 
 
-        } catch (error) {
+                    }
 
-            setMsg('Error occurred while fetching data');
-        }
+        }).catch(err => {
+            console.error(err);
+            setMsg('Something went wrong');
+        });
+
     };
+    useEffect(() => {
+        refreshData();
+        setMsg('')
+    }, []);
 
     return(
         <div className={"quickContainer"}>
@@ -115,7 +115,8 @@ const QuickInput = ({   auth: auth,
 
 
             <ThemeProvider theme={type.includes('income') ? theme : themeRed}>
-                {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
+                <OnlineChecker/>
+                {msg ? <Alert severity={msg.includes('Successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
                 <Box
                     component="form"
                     sx={{
@@ -130,7 +131,7 @@ const QuickInput = ({   auth: auth,
                     <TextField id="name"
                                type="text"
 
-                               label={t("Name")}
+                               label={t(`New ${type.includes('outcomes') ? 'Expense' : 'Income'}`)}
                                variant="outlined"
                                value={nameInput}
                                onChange={(e) => setNameInput(e.target.value)}
@@ -157,7 +158,7 @@ const QuickInput = ({   auth: auth,
                         value={categoryInput}
 
                         onChange={(e, value) => setCategoryInput(value)}
-                        renderInput={(params) => <TextField {...params} onChange={e => {setCategoryInput(e.target.value)}} label="Category" />}
+                        renderInput={(params) => <TextField {...params} onChange={e => {setCategoryInput(e.target.value)}} label={t("Category")} />}
                     />
 
 

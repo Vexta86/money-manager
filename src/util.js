@@ -20,11 +20,11 @@ function monthToFormat(givenMonth, language){
         if (days % 7 === 0){
             const weeks = days / 7;
             output.push(weeks);
-            weeks > 1 ? output.push('Weeks') : output.push('Week');
+            weeks > 1 ? output.push('weeks') : output.push('week');
 
         } else {
             output.push(days);
-            days > 1 ? output.push('Days') : output.push('Day');
+            days > 1 ? output.push('days') : output.push('day');
         }
 
 
@@ -33,10 +33,10 @@ function monthToFormat(givenMonth, language){
         if(givenMonth % 12 === 0){
             const years = givenMonth/12;
             output.push(years);
-            years > 1 ? output.push('Years') : output.push('Year');
+            years > 1 ? output.push('years') : output.push('year');
         } else{
             output.push(givenMonth);
-            givenMonth > 1 ? output.push('Months') : output.push('Month');
+            givenMonth > 1 ? output.push('months') : output.push('month');
         }
 
     }

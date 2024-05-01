@@ -51,7 +51,7 @@ i18n
                     'Name': 'Nombre',
                     'Price': 'Precio',
                     'Uncategorized': 'Sin categoría',
-                    'Category': 'Categoria',
+                    'Category': 'Categoría',
                     'Month': 'Mes',
                     'Year': 'Año',
                     'All categories': 'Todas',
@@ -72,9 +72,20 @@ i18n
                     'Week': 'Semana',
                     'Weeks': 'Semanas',
 
+                    'week': 'semana',
+                    'weeks': 'semanas',
+
                     'Months': 'Meses',
                     'Years': 'Años',
                     'Days': 'Días',
+
+                    'months': 'meses',
+                    'years': 'años',
+                    'days': 'días',
+
+                    'day': 'día',
+                    'year': 'año',
+                    'month': 'mes',
 
                     'New Frequent Expense': 'Gasto Frecuente Nuevo',
                     'Frequent Expenses': 'Gastos Frecuentes',

@@ -72,7 +72,7 @@ const HomePage = () => {
                 </button>
             </div>
             <div className="menuContainer">
-                <Menu auth={auth} language={language}/>
+                <Menu auth={auth} language={language} />
 
             </div>
         </div>

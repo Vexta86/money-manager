@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#00ADB5" />
     <meta
       name="description"
       content="A web app designed to keep track of your personal finances"
@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="manifest" href="/money-manager/manifest.json" />
 
     <title>Money Manager</title>
   </head>
@@ -21,7 +21,7 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <script>
       if('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js', {scope: '/'})
+        navigator.serviceWorker.register('/money-manager/sw.js')
                 .then((reg) => {
                   console.log('sw registered')
                 })

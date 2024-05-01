@@ -26,21 +26,22 @@ const FrequencySelector = ({
 
                     <div className='filterContainer'>
 
-                        <FormControl sx={{ width: '15ch' }}>
+                        <FormControl >
                             <TextField id="price"
+                                       // sx={{ width: '80px' }}
                                        type="number"
                                        label={t("Frequency")}
                                        variant="outlined"
                                        value={frequencyInput}
                                        error={!frequencyInput}
-                                       shrink
-                                       fullWidth={true}
+                                       // shrink
+                                       // fullWidth={true}
                                        onChange={(e) => changeFrequencyInput(e.target.value)}
 
                             />
                         </FormControl>
 
-                        <FormControl>
+                        <FormControl >
 
                             <InputLabel id="select-scale-label">{frequencyInput}</InputLabel>
                             <Select
