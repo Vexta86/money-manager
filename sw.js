@@ -132,7 +132,7 @@ function apiHandler(cacheName, req){
 
 const CACHE_STATIC_NAME = 'cache-static-v5.2';
 const CACHE_DYNAMIC_NAME = 'cache-dynamic-v1';
-const CACHE_IMMUTABLE_NAME = 'cache-immutable-v1'
+const CACHE_IMMUTABLE_NAME = 'cache-immutable-v1.1'
 const APP_SHELL = [
     '/',
 
@@ -161,9 +161,19 @@ const APP_SHELL_IMMUTABLE = [
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', e => {
 
-    const cacheStatic = caches.open(CACHE_STATIC_NAME).then(cache=> cache.addAll(APP_SHELL));
+    const cacheStatic = caches.open(CACHE_STATIC_NAME).then(cache=> {
+        for (const item of APP_SHELL){
+            cache.add(item).catch(err => console.error(item, err));
+        }
 
-    const cacheImmutable = caches.open(CACHE_IMMUTABLE_NAME).then(cache=> cache.addAll(APP_SHELL_IMMUTABLE));
+    });
+
+    const cacheImmutable = caches.open(CACHE_IMMUTABLE_NAME).then(cache=> {
+        for (const item of APP_SHELL_IMMUTABLE){
+            cache.add(item).catch(err => console.error(item,err))
+        }
+
+    });
 
     e.waitUntil(Promise.all([cacheImmutable, cacheStatic]))
 
