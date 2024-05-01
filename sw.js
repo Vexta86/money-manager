@@ -69,12 +69,11 @@ function postInputs() {
                     },
                     body: JSON.stringify(body)
                 }).then(res => {
-
-                    return res.json()
-                }).then(jsonD => {
-
                     return db.remove(doc)
-            });
+
+                }).catch(err => {
+                    console.error(err)
+            })
             posts.push(fetchProm);
 
         });
