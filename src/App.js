@@ -14,7 +14,7 @@ const MyContext = createContext();
 
 // for global states
 const MyProvider = ({children}) => {
-  const [isOffline, setIsOffline] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
   const updateIsOffline = (newValue) => {
     setIsOffline(newValue);
   }

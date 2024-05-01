@@ -152,7 +152,7 @@ const EditPage = () => {
         }
 
 
-        console.log(newData);
+
         fetch(`${localhost}/${type}/${elementID}`, {
             method: 'PATCH',
             headers: {
@@ -174,58 +174,6 @@ const EditPage = () => {
 
     }
 
-    function Content(){
-        return(<div className={'container'}> <Box
-            component="form"
-            sx={{
-                '& .MuiTextField-root': { m: 1, width: '25ch' },
-                'display': 'flex',
-                'flex-direction':'column'
-            }}
-            noValidate
-            autoComplete="off"
-        >
-            <TextField id="name"
-                       type="text"
-                       error={!nameInput}
-                       label={t("Name")}
-                       variant="outlined"
-                       value={nameInput}
-                       onChange={(e) => setNameInput(e.target.value)}
-
-            />
-            {isFrequent ? <FrequencySelector frequencyScale={frequencyScale} frequencyInput={frequencyInput} changeFrequencyScale={changeFrequencyScale} changeFrequencyInput={changeFrequencyInput}/> : <AdvanceDateSelector/>}
-
-            <TextField id="price"
-                       type="number"
-                       label={t("Price") + ' ' + formatMoney(priceInput)}
-                       variant="outlined"
-                       value={priceInput}
-                       error={!priceInput}
-                       onChange={(e) => setPriceInput(e.target.value)}
-
-            />
-
-            <Autocomplete
-                freeSolo
-                disablePortal
-                id="category"
-                options={categories}
-                value={categoryInput}
-
-                onChange={(e, newValue) => setCategoryInput(newValue)}
-                renderInput={(params) =>
-                    <TextField onChange={(e) => setCategoryInput(e.target.value)} {...params} label="Category"  error={!categoryInput}/>}
-            />
-        </Box>
-
-            <ButtonGroup variant="contained" aria-label="Basic button group">
-                <Button onClick={() => navigate(-1)} >{t("Cancel")}</Button>
-                <Button onClick={onDelete} color='error'>️{t("Delete")}</Button>
-                <Button onClick={onSave} color='success'>{t("Save")}</Button>
-
-            </ButtonGroup></div>)
-    }
 
     useEffect(() => {
         i18n.changeLanguage(language).then();
@@ -275,7 +223,7 @@ const EditPage = () => {
 
         });
 
-    }, [auth, elementID, i18n, isFrequent, language, type]);
+    }, []);
 
     if (!authenticated) {
         return <Navigate to='/money-manager/login'/>;
@@ -294,22 +242,69 @@ const EditPage = () => {
 
                 <ThemeProvider theme={theme}>
 
-                    {isLoading ? <CircularProgress /> : <Content/>}
+                    {isLoading ?
+                        <CircularProgress/> :
+                        <div className={'container'}>
+                            <Box
+                                component="form"
+                                sx={{
+                                    '& .MuiTextField-root': {m: 1, width: '25ch'},
+                                    'display': 'flex',
+                                    'flexDirection': 'column'
+                                }}
+                                noValidate
+                                autoComplete="off"
+                            >
+                            <TextField id="name"
+                                       type="text"
+                                       error={!nameInput}
+                                       label={t("Name")}
+                                       variant="outlined"
+                                       value={nameInput}
+                                       onChange={(e) => setNameInput(e.target.value)}
+
+                            />
+                            {isFrequent ?
+                                <FrequencySelector frequencyScale={frequencyScale} frequencyInput={frequencyInput}
+                                                   changeFrequencyScale={changeFrequencyScale}
+                                                   changeFrequencyInput={changeFrequencyInput}/> :
+                                <AdvanceDateSelector/>}
+
+                            <TextField id="price"
+                                       type="number"
+                                       label={t("Price") + ' ' + formatMoney(priceInput)}
+                                       variant="outlined"
+                                       value={priceInput}
+                                       error={!priceInput}
+                                       onChange={(e) => setPriceInput(e.target.value)}
+
+                            />
+
+                            <Autocomplete
+                                freeSolo
+                                disablePortal
+                                id="category"
+                                options={categories}
+                                value={categoryInput}
+
+                                onChange={(e, newValue) => setCategoryInput(newValue)}
+                                renderInput={(params) =>
+                                    <TextField onChange={(e) => setCategoryInput(e.target.value)} {...params}
+                                               label="Category" error={!categoryInput}/>}
+                            />
+                            </Box>
+
+                                <ButtonGroup variant="contained" aria-label="Basic button group">
+                                    <Button onClick={() => navigate(-1)}>{t("Cancel")}</Button>
+                                    <Button onClick={onDelete} color='error'>️{t("Delete")}</Button>
+                                    <Button onClick={onSave} color='success'>{t("Save")}</Button>
+
+                                </ButtonGroup>
+                        </div>}
 
                     {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
 
                 </ThemeProvider>
-
-
-
-
-
-
-
-
-
-
-
 
 
             </div>

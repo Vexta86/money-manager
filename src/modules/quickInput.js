@@ -11,6 +11,7 @@ import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import FrequencySelector from "./FrequencySelector";
 import OnlineChecker from "./OnlineChecker";
+import dayjs from "dayjs";
 
 const QuickInput = ({   auth: auth,
                         type: type,
@@ -24,6 +25,7 @@ const QuickInput = ({   auth: auth,
     const [msg, setMsg] = useState('');
 
     const { t } = useTranslation();
+    const current_date = new Date();
 
 
     const [frequencyInput, setFrequencyInput] = useState(1);
@@ -57,11 +59,15 @@ const QuickInput = ({   auth: auth,
                         'name': nameInput ? nameInput : 'new outcome',
                         'category': categoryInput ? categoryInput : 'none',
                         'frequency': frequencyMonth ? frequencyMonth : 1,
-                        'price': priceInput ? priceInput : 1
+                        'price': priceInput ? priceInput : 1,
+
                     })
         }).then(res => {
+            console.log(res)
             if(!res.ok){
                 setMsg('Network response was not ok');
+            } else if(res.offline){
+                setMsg('Saved offline')
             } else {
                 setMsg('Successful');
 
@@ -84,9 +90,11 @@ const QuickInput = ({   auth: auth,
                     body: JSON.stringify({
                         'name': nameInput ? nameInput : type.includes('income') ? t("New Income") : t('New Expense'),
                         'category': categoryInput ? categoryInput : 'none',
-                        'price': priceInput
+                        'price': priceInput,
+
                     })
                 }).then(res=>{
+
                     if(!res.ok){
                         console.error('Network response was not ok', res);
                         setMsg('Network response was not ok');
@@ -97,8 +105,17 @@ const QuickInput = ({   auth: auth,
 
 
                     }
+                    return res.json()
 
-        }).catch(err => {
+
+        }).then(jsonD =>{
+            if (jsonD.offline){
+                setMsg('Saved Offline')
+            }
+            console.log(jsonD)
+            }
+
+        ).catch(err => {
             console.error(err);
             setMsg('Something went wrong');
         });
@@ -122,7 +139,7 @@ const QuickInput = ({   auth: auth,
                     sx={{
                         '& .MuiTextField-root': { m: 1, width: '25ch' },
                         'display': 'flex',
-                        'flex-direction':'column'
+                        'flexDirection':'column'
                     }}
                     noValidate
                     autoComplete="off"

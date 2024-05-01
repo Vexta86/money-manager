@@ -133,6 +133,7 @@ const Table = ({   auth: auth,
 
                         return <TableRow elements={array}
                                          id={item._id}
+                                         key={item._id}
                                          auth={auth}
                                          type={type}
                                          language={language}

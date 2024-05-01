@@ -126,7 +126,7 @@ const Planner = () => {
         return (<div style={{alignItems:"center", width:"100%"}}>
             {monthlyDocs ? monthlyDocs.map((cat) => {
                 return (
-                    <div style={{width:"100%"}}>
+                    <div style={{width:"100%"}} key={cat.category}>
                         <h2>{t('Category')} {cat.category}</h2>
                         <Table auth={auth} categories={frequentCats} selectedCategory={cat.category}
                                type={'frequent-outcomes'} docs={cat.elements[0]} language={language}

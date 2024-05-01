@@ -14,7 +14,7 @@ const FilterCategory = ({   selectedCategory: selectedCategory,
     return(
         <ThemeProvider theme={theme}>
             <FormControl fullWidth>
-                <InputLabel id="select-category-label">{t("Category")}</InputLabel>
+                <InputLabel id="select-category-label" > {t("Category")}</InputLabel>
                 <Select
                     labelId="select-category-label"
                     id="select-category"
@@ -24,12 +24,12 @@ const FilterCategory = ({   selectedCategory: selectedCategory,
                 >
 
                     {monthCategories.length > 1 || monthCategories.length === 0 ?
-                        <MenuItem value="">
+                        <MenuItem value="" key={'All'}>
                             {t("All categories")}
                         </MenuItem> : null}
 
                     {monthCategories ? monthCategories.map((item) => {
-                        return <MenuItem value={item}>{item}</MenuItem>;
+                        return <MenuItem value={item} key={item}>{item}</MenuItem>;
                     }) : null}
                 </Select>
             </FormControl>

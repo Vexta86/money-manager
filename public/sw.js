@@ -4,7 +4,7 @@ importScripts('https://cdn.jsdelivr.net/npm/pouchdb@7.0.0/dist/pouchdb.min.js');
 function updateDynamicCache( dynamicCache, req, res) {
     if(res.ok) {
         return caches.open(dynamicCache).then(cache=>{
-            cache.put(req, res.clone())
+            cache.put(req, res.clone()).then()
             return res.clone();
         })
     } else {
@@ -32,10 +32,10 @@ function savePost( body, url, auth) {
     return db.put(body).then(()=>{
 
         // eslint-disable-next-line no-restricted-globals
-        self.registration.sync.register('new-post');
+        self.registration.sync.register('new-post').then();
 
         const tempRes = { ok: true, offline: true};
-        console.log('Request saved for future posting')
+
         return new Response(JSON.stringify(tempRes));
 
 
@@ -52,8 +52,14 @@ function postInputs() {
         docs.rows.forEach(row => {
             const doc = row.doc;
 
-            console.log(doc);
 
+            const body = {
+                'name': doc.name,
+                'category': doc.category,
+                'frequency': doc.frequency,
+                'price': doc.price,
+                'date': doc.date
+            }
             const fetchProm = fetch(doc.url, {
                     method: 'POST',
                     headers: {
@@ -61,10 +67,14 @@ function postInputs() {
                         'Accept': '*/*',
                         'Authorization': doc.auth,
                     },
-                    body: JSON.stringify(doc)
+                    body: JSON.stringify(body)
                 }).then(res => {
+
+                    return res.json()
+                }).then(jsonD => {
+
                     return db.remove(doc)
-                });
+            });
             posts.push(fetchProm);
 
         });
@@ -113,7 +123,7 @@ function apiHandler(cacheName, req){
             return caches.match(req)
         })
     } else {
-        console.log('searching th web');
+
         return fetch(req)
     }
 
@@ -188,7 +198,7 @@ self.addEventListener('fetch', e => {
     //money-manager-api
 
     if (e.request.url.includes('money-manager-api')) {
-        console.log('TO the api')
+
         response = apiHandler(CACHE_DYNAMIC_NAME, e.request);
     } else  {
         response = caches.match(e.request).then( res => {
@@ -217,7 +227,7 @@ self.addEventListener('fetch', e => {
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('sync', e =>{
-    console.log('SW: sync');
+
     if ( e.tag === 'new-post' ){
 
         const response = postInputs();
