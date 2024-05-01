@@ -204,7 +204,7 @@ self.addEventListener('activate', e=>{
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', e => {
     let response;
-    console.log(e.request.url)
+
     //money-manager-api
 
     if (e.request.url.includes('money-manager-api')) {
@@ -239,7 +239,7 @@ self.addEventListener('fetch', e => {
 self.addEventListener('sync', e =>{
 
     if ( e.tag === 'new-post' ){
-
+        console.log('In the tas of posting')
         const response = postInputs();
         e.waitUntil(response);
     }
