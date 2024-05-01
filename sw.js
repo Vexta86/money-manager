@@ -32,7 +32,9 @@ function savePost( body, url, auth) {
     return db.put(body).then(()=>{
 
         // eslint-disable-next-line no-restricted-globals
-        self.registration.sync.register('new-post').then();
+        self.registration.sync.register('new-post').then(()=>{
+            postInputs().catch(err=>console.error)
+        });
 
         const tempRes = { ok: true, offline: true};
 
@@ -236,7 +238,7 @@ self.addEventListener('fetch', e => {
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('sync', e =>{
-
+    console.log('Back online')
     if ( e.tag === 'new-post' ){
         console.log('In the tas of posting')
         const response = postInputs();
