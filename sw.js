@@ -131,7 +131,7 @@ function apiHandler(cacheName, req){
 }
 
 const CACHE_STATIC_NAME = 'cache-static-v5.2';
-const CACHE_DYNAMIC_NAME = 'cache-dynamic-v1';
+const CACHE_DYNAMIC_NAME = 'cache-dynamic-v1.1';
 const CACHE_IMMUTABLE_NAME = 'cache-immutable-v1.1'
 const APP_SHELL = [
     '/',
@@ -204,7 +204,7 @@ self.addEventListener('activate', e=>{
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', e => {
     let response;
-
+    console.log(e.request.url)
     //money-manager-api
 
     if (e.request.url.includes('money-manager-api')) {
