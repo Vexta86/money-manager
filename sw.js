@@ -69,10 +69,13 @@ function postInputs() {
                     },
                     body: JSON.stringify(body)
                 }).then(res => {
-                    return db.remove(doc)
+                    if (!res.ok) {
+                        throw new Error('Failed to post data');
+                    }
+                    return db.remove(doc);
 
                 }).catch(err => {
-                    console.error(err)
+                    console.error('Error posting data:', err);
             })
             posts.push(fetchProm);
 
