@@ -86,29 +86,33 @@ function postInputs() {
 
 
 function apiHandler(cacheName, req){
-    const cloned = req.clone();
-    if (cloned.method === 'POST'){
 
-        if (cloned.url.includes('login') || cloned.url.includes('signup')){
+    if (req.clone().method === 'POST'){
+
+        if (req.clone().url.includes('login') || req.clone().url.includes('signup')){
             return fetch(req)
         } else {
-
-            // eslint-disable-next-line no-restricted-globals
-            if (self.registration.sync) {
-                return req.clone().text().then(body => {
-                    const bodyObj = JSON.parse(body);
-
-                    return savePost(bodyObj, cloned.url, cloned.headers.get('Authorization'));
-
-                })
-            } else {
+            if(window.navigator.onLine){
                 return fetch(req);
+            } else {
+                // eslint-disable-next-line no-restricted-globals
+                if (self.registration.sync) {
+                    return req.clone().text().then(body => {
+                        const bodyObj = JSON.parse(body);
+
+                        return savePost(bodyObj, req.clone().url, req.clone().headers.get('Authorization'));
+
+                    })
+                } else{
+                    return fetch(req);
+                }
             }
+
         }
 
 
 
-    } else if (cloned.method === 'GET') {
+    } else if (req.clone().method === 'GET') {
 
 
 
@@ -209,7 +213,6 @@ self.addEventListener('fetch', e => {
     //money-manager-api
 
     if (e.request.url.includes('money-manager-api')) {
-
         response = apiHandler(CACHE_DYNAMIC_NAME, e.request);
     } else  {
         response = caches.match(e.request).then( res => {
