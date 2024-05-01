@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/money-manager/static/css/main.0a0e8a6f.css",
-    "main.js": "/money-manager/static/js/main.14a25f78.js",
+    "main.css": "/money-manager/static/css/main.27509b6f.css",
+    "main.js": "/money-manager/static/js/main.f577e690.js",
     "static/js/453.e0571032.chunk.js": "/money-manager/static/js/453.e0571032.chunk.js",
     "index.html": "/money-manager/index.html",
-    "main.0a0e8a6f.css.map": "/money-manager/static/css/main.0a0e8a6f.css.map",
-    "main.14a25f78.js.map": "/money-manager/static/js/main.14a25f78.js.map",
+    "main.27509b6f.css.map": "/money-manager/static/css/main.27509b6f.css.map",
+    "main.f577e690.js.map": "/money-manager/static/js/main.f577e690.js.map",
     "453.e0571032.chunk.js.map": "/money-manager/static/js/453.e0571032.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.0a0e8a6f.css",
-    "static/js/main.14a25f78.js"
+    "static/css/main.27509b6f.css",
+    "static/js/main.f577e690.js"
   ]
 }

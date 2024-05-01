@@ -8,3 +8,12 @@ function updateDynamicCache( dynamicCache, req, res) {
         return res;
     }
 }
+
+function updateStaticCache( staticCache, req, APP_SHELL_IMMUTABLE) {
+    if(!APP_SHELL_IMMUTABLE.includes(req.url)) {
+        return fetch(req).then(res=>{
+            return updateDynamicCache(staticCache, req, res);
+        });
+    }
+}
+
