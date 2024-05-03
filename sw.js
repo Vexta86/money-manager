@@ -79,6 +79,8 @@ function postInputs() {
                     if (!res.ok) {
                         throw new Error('Failed to post data');
                     } else {
+                        // eslint-disable-next-line no-restricted-globals
+
                         return db.remove(doc);
                     }
 
@@ -124,7 +126,6 @@ function apiHandler(cacheName, req){
 
 
     } else if (req.clone().method === 'GET') {
-
 
 
 
