@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { Navigate, useLocation  } from 'react-router-dom';
 import { parseToDate, localhost} from "../util";
 
-import Menu from './menu'
+import Menu from '../modules/menu'
 import {useTranslation} from "react-i18next";
 
 import dayjs from "dayjs";
@@ -14,6 +14,7 @@ import FilterCategory from "../modules/FilterCategory";
 import {ThemeProvider} from "@mui/material/styles";
 import {themeRed} from "../config/ThemeMUI";
 import LinearProgress from "@mui/material/LinearProgress";
+import {MyContext} from "../App";
 
 
 
@@ -31,7 +32,7 @@ const OutcomePage = () => {
 
 
     const current_date = new Date();
-    const [authenticated, setAuthenticated] = useState(!!auth); // Set authenticated based on token existence
+    const {isAuth, updateIsAuth} = useContext(MyContext);
 
 
     const [docs, setDocs] = useState(null);
@@ -52,6 +53,7 @@ const OutcomePage = () => {
         const selectedYear = date.year();
         setMonth(selectedMonth);
         setYear(selectedYear);
+        fetchOutcomes();
 
     }
 
@@ -73,10 +75,10 @@ const OutcomePage = () => {
         }).then((response) => {
 
             if (!response.ok) {
-                setAuthenticated(false);
+                updateIsAuth(false);
                 throw new Error('Network response was not ok');
             }
-            setAuthenticated(true);
+            updateIsAuth(true);
             return response.json();
 
         }).then(data => {
@@ -100,6 +102,7 @@ const OutcomePage = () => {
     }
 
     useEffect(() => {
+        fetchOutcomes()
         i18n.changeLanguage(language).then();
 
         if (!auth) {
@@ -108,13 +111,13 @@ const OutcomePage = () => {
 
         setSelectedCategory('')
 
-    }, [auth]);
-
+    }, []);
     useEffect(() => {
-        fetchOutcomes();
-    }, [selectedDate, selectedCategory]);
+        fetchOutcomes()
+    }, [year, month]);
 
-    if (!authenticated) {
+
+    if (!isAuth) {
         return <Navigate to='/money-manager/login' />;
     }
     return (

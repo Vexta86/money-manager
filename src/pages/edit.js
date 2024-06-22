@@ -13,7 +13,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
-import {Button, CircularProgress} from "@mui/material";
+import {Button, CircularProgress, Icon} from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import {theme} from "../config/ThemeMUI";
 import Alert from "@mui/material/Alert";
@@ -234,9 +234,20 @@ const EditPage = () => {
     return (
         <div>
             <div className={'container'}>
-                <h1>
-                    {t("Editing")} {nameInput}
-                </h1>
+
+                <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+
+
+                        <Icon onClick={() => navigate(-1)} style={{cursor: "pointer"}}>
+                            arrow_back
+                        </Icon>
+
+
+                    <h1>
+                        {t("Editing")} {nameInput}
+                    </h1>
+                </div>
+
                 <OnlineChecker/>
 
 
@@ -295,9 +306,9 @@ const EditPage = () => {
                             </Box>
 
                                 <ButtonGroup variant="contained" aria-label="Basic button group">
-                                    <Button onClick={() => navigate(-1)}>{t("Cancel")}</Button>
+
                                     <Button onClick={onDelete} color='error'>️{t("Delete")}</Button>
-                                    <Button onClick={onSave} color='success'>{t("Save")}</Button>
+                                    <Button onClick={onSave} >{t("Save")}</Button>
 
                                 </ButtonGroup>
                         </div>}

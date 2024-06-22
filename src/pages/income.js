@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Navigate, useLocation} from 'react-router-dom';
 import './styles.css';
 import {localhost, parseToDate} from "../util";
 import QuickInput from "../modules/quickInput";
 import Table from "../modules/Table";
 
-import Menu from './menu'
+import Menu from '../modules/menu'
 import {useTranslation} from "react-i18next";
 
 
@@ -17,6 +17,7 @@ import Box from "@mui/material/Box";
 import {ThemeProvider} from "@mui/material/styles";
 import {theme} from "../config/ThemeMUI";
 import OnlineChecker from "../modules/OnlineChecker";
+import {MyContext} from "../App";
 
 
 
@@ -33,7 +34,7 @@ const IncomePage = () => {
 
 
     const current_date = new Date();
-    const [authenticated, setAuthenticated] = useState(!!auth); // Set authenticated based on token existence
+    const {isAuth, updateIsAuth} = useContext(MyContext);
 
 
     const [docs, setDocs] = useState(null);
@@ -49,6 +50,7 @@ const IncomePage = () => {
 
 
     const [isLoading, setIsLoading] = useState(true);
+    const {isOffline} = useContext(MyContext);
 
     async function changeSelectedDate(date) {
         setSelectedDate(date);
@@ -56,6 +58,7 @@ const IncomePage = () => {
         const selectedYear = date.year();
         setMonth(selectedMonth);
         setYear(selectedYear);
+        fetchIncome();
 
     }
 
@@ -77,10 +80,10 @@ const IncomePage = () => {
         }).then((response) => {
 
             if (!response.ok) {
-                setAuthenticated(false);
+                updateIsAuth(false);
                 throw new Error('Network response was not ok');
             }
-            setAuthenticated(true);
+            updateIsAuth(true);
             return response.json();
 
         }).then(data => {
@@ -105,6 +108,7 @@ const IncomePage = () => {
 
 
     useEffect(() => {
+        fetchIncome();
         i18n.changeLanguage(language).then();
         if (!auth) {
             return; // No need to make API call if token doesn't exist
@@ -112,15 +116,15 @@ const IncomePage = () => {
        
         setSelectedCategory('');
 
-    }, [auth]);
-
-    useEffect(() => {
-
+    }, []);
+    useEffect(()=>{
         fetchIncome();
+    },[year, month])
 
-    }, [selectedDate, selectedCategory]);
 
-    if (!authenticated) {
+
+
+    if (!isAuth) {
         return <Navigate to='/money-manager/login' />;
     }
     return (

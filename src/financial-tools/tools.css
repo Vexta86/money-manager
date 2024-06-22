@@ -1,0 +1,34 @@
+
+.tool-card{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dark-color);
+    width:min-content;
+    height: auto;
+    margin: 4%;
+    padding: 4% 16% 4% 16%;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+
+.tools-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20%;
+}
+
+.tool-card h1{
+    color: var(--light-color);
+}
+
+.tool-card p{
+    color: var(--light-color);
+}
+
+@media only screen and (orientation: landscape){
+    .tools-container{
+        margin-bottom: 0;
+    }
+}

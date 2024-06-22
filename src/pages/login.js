@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 // for redirecting and parsing the token
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -16,6 +16,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import {ThemeProvider} from "@mui/material/styles";
 import Alert from "@mui/material/Alert";
 import LinearProgress from '@mui/material/LinearProgress';
+import {MyContext} from "../App";
 
 
 
@@ -30,6 +31,8 @@ const LoginPage = ()=> {
     const [msg, setMsg] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const {updateIsAuth} = useContext(MyContext);
 
     const navigate = useNavigate();
 
@@ -52,35 +55,18 @@ const LoginPage = ()=> {
         }).then(data =>{
             if (data.token){
                 const auth = 'Bearer ' + data.token;
-
+                updateIsAuth(true)
                 navigate('/money-manager/home', { state: {auth: auth, language: language}});
             }
             setMsg(data.message);
 
             setIsLoading(false)
         }).catch(err=>{
+            updateIsAuth(false)
             setMsg('Something went wrong')
+            setIsLoading(false)
         })
-        // try {
-        //     const response = await fetch(, ),
-        //     });
-        //     const jsonData = await response.json();
-        //     setMsg(jsonData.message);
-        //     if(jsonData.token){
-        //
-        //         // redirects to home page parsing the token
-        //
-        //         const auth = 'Bearer ' + jsonData.token;
-        //         setIsLoading(false)
-        //
-        //
-        //     }
-        //     setIsLoading(false)
-        // } catch (error) {
-        //     setIsLoading(false)
-        //     setMsg("Error");
-        //     console.error('Error fetching data:', error);
-        // }
+
     };
 
 
@@ -126,6 +112,11 @@ const LoginPage = ()=> {
                     }}
                     noValidate
                     autoComplete="off"
+                    onSubmit={(e)=>{
+                        e.preventDefault()
+
+                        handleLoginRequest()
+                    }}
                 >
 
                     <TextField id="email"
@@ -149,7 +140,8 @@ const LoginPage = ()=> {
 
                     <Button variant="contained"
                             theme={theme}
-                            onClick={handleLoginRequest}
+                            type={'submit'}
+                            // onClick={handleLoginRequest}
                     >
                         {t('Log in')}
                     </Button>

@@ -13,6 +13,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
     <link rel="manifest" href="/money-manager/manifest.json" />
 
     <title>Money Manager</title>
@@ -20,14 +22,30 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <script>
+
+      var swReg;
       if('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/money-manager/sw.js')
-                .then((reg) => {
-                  console.log('sw registered')
-                })
-        navigator.serviceWorker.ready.then((reg) => {
-          console.log('services worker ready');
-        });
+
+        window.addEventListener('load', ()=>{
+          navigator
+                  .serviceWorker
+                  .register('/money-manager/sw.js', { scope: '/money-manager/' })
+                  .then((reg) => {
+                    swReg = reg;
+                    swReg.pushManager.getSubscription().then(verifySubscription)
+                    console.log('sw registered with scope /')
+                  })
+                  .catch(err=>{
+                    console.log('SW registration failed', err)
+                  });
+          navigator
+                  .serviceWorker
+                  .ready
+                  .then((reg) => {
+                    console.log('services worker ready');
+                  });
+        })
+
       }
     </script>
 

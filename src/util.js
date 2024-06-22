@@ -99,7 +99,7 @@ function parseToDate(dateString, language){
 
 }
 
-function formatMoney(stringNumber) {
+const formatMoney = (stringNumber)=> {
     // Convert the string to a number
     const number = parseFloat(stringNumber);
 

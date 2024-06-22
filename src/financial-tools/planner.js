@@ -1,22 +1,23 @@
-import React, {useState, useEffect} from "react";
-import {Navigate, useLocation} from 'react-router-dom';
+import React, {useState, useEffect, useContext} from "react";
+import {Navigate, useLocation, useNavigate} from 'react-router-dom';
 
-import { localhost} from "../util";
-import './styles.css';
+import {formatMoney, localhost} from "../util";
+import '../pages/styles.css';
 
-import Menu from './menu'
+import Menu from '../modules/menu'
 import {useTranslation} from "react-i18next";
 import QuickInput from "../modules/quickInput";
 import Table from "../modules/Table";
 
-import {CircularProgress} from "@mui/material";
+import {CircularProgress, Icon} from "@mui/material";
 import {ThemeProvider} from "@mui/material/styles";
 import {themeRed} from "../config/ThemeMUI";
+import {MyContext} from "../App";
 
 
 
 const Planner = () => {
-
+    const {isOffline} = useContext(MyContext);
 
     const location = useLocation();
     const auth = location.state?.auth;
@@ -31,10 +32,11 @@ const Planner = () => {
 
     const [frequentCats, setFrequentCats] = useState([]);
 
-
+    const navigate = useNavigate();
 
     const [monthlyDocs, setMonthlyDocs] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [total, setTotal] = useState(0);
 
     function fetchFrequents() {
         setIsLoading(true)
@@ -56,23 +58,13 @@ const Planner = () => {
 
         }).then(data => {
 
-
-
-
-
-
-
-
-
             const uniqueCategoryArray = Array.from(new Set(data.docs.map(i => i.category)));
             setFrequentCats(uniqueCategoryArray)
 
 
             const categoriesAndPrice =  uniqueCategoryArray.map(i => {
 
-
-
-                const price = data.docs.reduce((acc, item) => {
+                const price = data.docs?.reduce((acc, item) => {
                     if (item.category === i) {
                         return acc + (Math.round((item.price/item.frequency) * 10) / 10);
                     } else {
@@ -97,6 +89,10 @@ const Planner = () => {
 
 
             setMonthlyDocs(categoriesAndPrice);
+            setTotal(categoriesAndPrice?.reduce((accumulator, product)=>{
+                return accumulator + product.price;
+            }, 0))
+
             setIsLoading(false)
 
 
@@ -106,17 +102,15 @@ const Planner = () => {
     }
 
     useEffect(() => {
+        fetchFrequents();
         i18n.changeLanguage(language).then();
 
         if (!auth) {
             return; // No need to make API call if token doesn't exist
         }
 
-    }, [auth]);
-
-    useEffect(() => {
-        fetchFrequents();
     }, []);
+
 
     if (!authenticated) {
         return <Navigate to='/money-manager/login' />;
@@ -139,38 +133,43 @@ const Planner = () => {
         </div>)
     }
 
+
     return (
         <div>
             <ThemeProvider theme={themeRed}>
-            <div className="container-red">
+                <div className="container-red">
 
 
-                <h1>{t('Monthly Budget')}</h1>
+                    <h1>
+                        <a onClick={() => {
+                            navigate(-1)
+                        }}>
+                            <Icon>arrow_back</Icon>
+                        </a>
 
 
-                <div className='container-2'>
+                        {t('Monthly Budget')}
+                    </h1>
+
+                    <h3>Total = {formatMoney(total)}</h3>
+                    <div className='container-2'>
 
                         <div className='frequent-container'>
+
                             {isLoading ? <CircularProgress/> : <CategoryTables/>}
+
                         </div>
 
 
+                        <QuickInput auth={auth} categories={frequentCats} type={'frequent-outcomes'}
+                                    refreshData={fetchFrequents}/>
 
-
-                    <QuickInput auth={auth} categories={frequentCats} type={'frequent-outcomes'}
-                                refreshData={fetchFrequents}/>
-
-                </div>
-
-
-                <div className="menuContainer">
-                    <Menu auth={auth} language={language}/>
+                    </div>
 
 
                 </div>
-
-            </div>
             </ThemeProvider>
+
         </div>
 
     );

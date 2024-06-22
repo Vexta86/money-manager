@@ -98,6 +98,25 @@ i18n
 
 
 
+                    'This Month': 'Este Mes',
+                    'Last Month': 'Mes Pasado',
+                    'Previous Months': 'Meses Anteriores',
+
+                    'Tools': 'Utilidades',
+
+                    'Financial Tools': 'Herramientas Financieras',
+
+                    'Profit': 'Ganancias',
+                    'Average': 'Promedio',
+                    'Total Income': 'Ingresos Totales',
+                    'Total Expenses': 'Gastos Totales',
+                    'Total Profit': 'Ganancias Totales',
+
+                    'Average Income': 'Ingreso Promedio',
+                    'Average Expenses': 'Gastos Promedio',
+                    'Average Profit': 'Ganancias Promedio'
+
+
                     // Add more translations here
                 },
             },

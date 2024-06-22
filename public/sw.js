@@ -29,25 +29,32 @@ function savePost( body, url, auth) {
     body.url = url;
     body.auth = auth;
 
-    return db.put(body).then(()=>{
-
-        // eslint-disable-next-line no-restricted-globals
-        self.registration.sync.register('new-post').then();
-
-        const tempRes = { ok: true, offline: true};
-
-        return new Response(JSON.stringify(tempRes));
-
-
-    })
+    return db.put(body)
+        .then(() => {
+            // eslint-disable-next-line no-restricted-globals
+            return self.registration.sync.register('new-post')
+                .then(() => {
+                    console.log('Task saved successfully');
+                    const tempRes = { ok: true, offline: true };
+                    return new Response(JSON.stringify(tempRes));
+                })
+                .catch(err => {
+                    console.error('Could not register the task', err);
+                    // Handle the error and return an appropriate response
+                    const errorRes = { ok: false, error: err.message };
+                    return new Response(JSON.stringify(errorRes), { status: 500 });
+                });
+        })
+        .catch(dbErr => {
+            console.error('Could not save the post to the database', dbErr);
+            // Handle the database error and return an appropriate response
+            const errorRes = { ok: false, offline: true, error: dbErr.message };
+            return new Response(JSON.stringify(errorRes), { status: 500 });
+        });
 }
 
 function postInputs() {
-
     const posts = [];
-
-
-
     return db.allDocs({include_docs: true}).then(docs => {
         docs.rows.forEach(row => {
             const doc = row.doc;
@@ -69,12 +76,18 @@ function postInputs() {
                     },
                     body: JSON.stringify(body)
                 }).then(res => {
+                    if (!res.ok) {
+                        throw new Error('Failed to post data');
+                    } else {
+                        // eslint-disable-next-line no-restricted-globals
 
-                    return res.json()
-                }).then(jsonD => {
+                        return db.remove(doc);
+                    }
 
-                    return db.remove(doc)
-            });
+
+                }).catch(err => {
+                    console.error('Error posting data:', err);
+            })
             posts.push(fetchProm);
 
         });
@@ -85,30 +98,34 @@ function postInputs() {
 
 
 function apiHandler(cacheName, req){
-    const cloned = req.clone();
-    if (cloned.method === 'POST'){
 
-        if (cloned.url.includes('login') || cloned.url.includes('signup')){
+    if (req.clone().method === 'POST'){
+
+        if (req.clone().url.includes('login') || req.clone().url.includes('signup')){
             return fetch(req)
         } else {
-
             // eslint-disable-next-line no-restricted-globals
-            if (self.registration.sync) {
-                return req.clone().text().then(body => {
-                    const bodyObj = JSON.parse(body);
-
-                    return savePost(bodyObj, cloned.url, cloned.headers.get('Authorization'));
-
-                })
-            } else {
+            if(self.navigator.onLine){
                 return fetch(req);
+            } else {
+                // eslint-disable-next-line no-restricted-globals
+                if (self.registration.sync) {
+                    return req.clone().text().then(body => {
+                        const bodyObj = JSON.parse(body);
+
+                        return savePost(bodyObj, req.clone().url, req.clone().headers.get('Authorization'));
+
+                    })
+                } else{
+                    return fetch(req);
+                }
             }
+
         }
 
 
 
-    } else if (cloned.method === 'GET') {
-
+    } else if (req.clone().method === 'GET') {
 
 
 
@@ -131,8 +148,8 @@ function apiHandler(cacheName, req){
 }
 
 const CACHE_STATIC_NAME = 'cache-static-v5.2';
-const CACHE_DYNAMIC_NAME = 'cache-dynamic-v1';
-const CACHE_IMMUTABLE_NAME = 'cache-immutable-v1'
+const CACHE_DYNAMIC_NAME = 'cache-dynamic-v1.1';
+const CACHE_IMMUTABLE_NAME = 'cache-immutable-v1.1'
 const APP_SHELL = [
     '/',
 
@@ -161,9 +178,19 @@ const APP_SHELL_IMMUTABLE = [
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', e => {
 
-    const cacheStatic = caches.open(CACHE_STATIC_NAME).then(cache=> cache.addAll(APP_SHELL));
+    const cacheStatic = caches.open(CACHE_STATIC_NAME).then(cache=> {
+        for (const item of APP_SHELL){
+            cache.add(item).catch(err => console.error(item, err));
+        }
 
-    const cacheImmutable = caches.open(CACHE_IMMUTABLE_NAME).then(cache=> cache.addAll(APP_SHELL_IMMUTABLE));
+    });
+
+    const cacheImmutable = caches.open(CACHE_IMMUTABLE_NAME).then(cache=> {
+        for (const item of APP_SHELL_IMMUTABLE){
+            cache.add(item).catch(err => console.error(item,err))
+        }
+
+    });
 
     e.waitUntil(Promise.all([cacheImmutable, cacheStatic]))
 
@@ -198,7 +225,6 @@ self.addEventListener('fetch', e => {
     //money-manager-api
 
     if (e.request.url.includes('money-manager-api')) {
-
         response = apiHandler(CACHE_DYNAMIC_NAME, e.request);
     } else  {
         response = caches.match(e.request).then( res => {
@@ -227,7 +253,7 @@ self.addEventListener('fetch', e => {
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('sync', e =>{
-
+    console.log('Sync...')
     if ( e.tag === 'new-post' ){
 
         const response = postInputs();
