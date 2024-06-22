@@ -171,7 +171,7 @@ h1 {
     font-size: 20px;
     padding-bottom: 2%;
     padding-top: 2%;
-    border: 0px;
+    border: 0;
     cursor: pointer;
     transition: 0.2s;
 }
@@ -187,7 +187,7 @@ h1 {
     font-size: 20px;
     padding-bottom: 2%;
     padding-top: 2%;
-    border: 0px;
+    border: 0;
 
 }
 
@@ -203,7 +203,7 @@ h1 {
 }
 .inputDate{
 
-    padding: 4% 0% 2% 8%;
+    padding: 4% 0 2% 8%;
 
 }
 .tag-input{
@@ -259,8 +259,8 @@ h1 {
 
 
 .pTable{
-    padding: 0%;
-    margin: 0%;
+    padding: 0;
+    margin: 0;
 
 }
 .cell{
@@ -344,7 +344,6 @@ h1 {
     width: 90%;
     display: flex;
     flex-direction: column;
-
     box-sizing: border-box;
     max-height: 70vh;
     overflow-y: auto;
