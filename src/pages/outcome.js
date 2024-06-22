@@ -140,7 +140,7 @@ const OutcomePage = () => {
 
                 <div className="container-2">
                     <ThemeProvider theme={themeRed}>
-                    <div style={{width:"90%"}}>
+                    <div style={{width:"90%", display:'flex', flexDirection:'column', alignItems:'center'}}>
 
                         {isLoading ?
                             <LinearProgress/> :
@@ -153,16 +153,16 @@ const OutcomePage = () => {
                                    categories={monthCategories}
                         />}
 
-
+                        <QuickInput auth={auth}
+                                    type={'outcomes'}
+                                    categories={monthCategories}
+                                    refreshData={fetchOutcomes}
+                        />
                     </div>
                     </ThemeProvider>
 
 
-                    <QuickInput auth={auth}
-                                type={'outcomes'}
-                                categories={monthCategories}
-                                refreshData={fetchOutcomes}
-                    />
+
 
                 </div>
 

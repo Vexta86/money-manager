@@ -4,7 +4,7 @@ import {daysToMonths, formatMoney, localhost, weeksToMonths, yearsToMonths} from
 import TextField from '@mui/material/TextField';
 
 import Autocomplete from '@mui/material/Autocomplete';
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, Icon} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, Icon, Typography} from "@mui/material";
 import {theme, themeRed} from "../config/ThemeMUI";
 import {ThemeProvider} from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -149,14 +149,17 @@ const QuickInput = ({   auth: auth,
 
 
 
-                <Fab color="primary" aria-label="add" onClick={()=>setOpen(true)}>
+                <Fab variant="extended" color="primary" aria-label="add" onClick={()=>setOpen(true)}>
                     <Icon>add</Icon>
+                    {t(`New ${type.includes('outcomes') ? 'Expense' : 'Income'}`)}
                 </Fab>
 
                 <Dialog open={open} onClose={()=>setOpen(false)}>
 
                     <DialogTitle id="quick-input-title">
-                        {t(`New ${type.includes('outcomes') ? 'Expense' : 'Income'}`)}
+                        <b>
+                            {t(`New ${type.includes('outcomes') ? 'Expense' : 'Income'}`)}
+                        </b>
                     </DialogTitle>
 
 
@@ -178,13 +181,15 @@ const QuickInput = ({   auth: auth,
                             }
                         }}
                     >
-                        <OnlineChecker/>
-                        {msg ? <Alert severity={msg.includes('Successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
+
                         <DialogContent sx={{
                             '& .MuiTextField-root': { m: 1, width: '25ch' },
                             'display': 'flex',
                             'flexDirection':'column'
                         }}>
+
+                            <OnlineChecker/>
+                            {msg ? <Alert severity={msg.includes('Successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
 
                             <TextField id="name"
                                        type="text"

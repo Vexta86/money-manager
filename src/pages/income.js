@@ -13,10 +13,8 @@ import dayjs from "dayjs";
 import FilterCategory from "../modules/FilterCategory";
 import FilterMonth from "../modules/FilterMonth";
 import LinearProgress from '@mui/material/LinearProgress';
-import Box from "@mui/material/Box";
 import {ThemeProvider} from "@mui/material/styles";
 import {theme} from "../config/ThemeMUI";
-import OnlineChecker from "../modules/OnlineChecker";
 import {MyContext} from "../App";
 
 
@@ -99,11 +97,14 @@ const IncomePage = () => {
             const uniqueCategoryArray = Array.from(uniqueCategories);
             setMonthCategories(uniqueCategoryArray);
 
-            setIsLoading(false)
 
         }).catch(error => {
             console.error('Error fetching data:', error);
-        });
+        })
+            .finally(()=>{
+                setIsLoading(false)
+
+            })
     }
 
 
@@ -153,7 +154,7 @@ const IncomePage = () => {
 
                 <div className="container-2">
                     <ThemeProvider theme={theme}>
-                    <div style={{width:"90%"}}>
+                    <div style={{width:"90%", display:'flex', flexDirection:'column', alignItems:'center'}}>
 
                         {isLoading ?
                             <LinearProgress/> :
@@ -166,17 +167,17 @@ const IncomePage = () => {
                                    categories={monthCategories}
                             />
                         }
-
+                        <QuickInput auth={auth}
+                                    type={'incomes'}
+                                    categories={monthCategories}
+                                    refreshData={fetchIncome}
+                        />
 
                     </div>
                     </ThemeProvider>
 
 
-                    <QuickInput auth={auth}
-                                type={'incomes'}
-                                categories={monthCategories}
-                                refreshData={fetchIncome}
-                    />
+
 
                 </div>
 

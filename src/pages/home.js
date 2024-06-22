@@ -203,7 +203,7 @@ const HomePage = () => {
                     name: 'Total Income',
                     tag: 'Total',
                     icon: 'functions',
-                    color: 'primary',
+                    color: 'success',
                     value: data.reduce((sum, entry) => sum + entry.income, 0)
                 };
                 const totalExpenses = {
@@ -217,7 +217,7 @@ const HomePage = () => {
                     name: "Total Profit",
                     tag: 'Total',
                     icon: 'functions',
-                    color: 'success',
+                    color: 'primary',
                     value: data.reduce((sum, entry) => sum + entry.profit, 0)
                 };
 
@@ -225,7 +225,7 @@ const HomePage = () => {
                     name:'Average Income',
                     tag: 'Average',
                     icon: 'trending_up',
-                    color: 'primary',
+                    color: 'success',
                     value: totalIncome.value / data.length
                 };
                 const averageExpenses = {
@@ -239,7 +239,7 @@ const HomePage = () => {
                     name: 'Average Profit',
                     tag: 'Average',
                     icon: 'attach_money',
-                    color: 'success',
+                    color: 'primary',
                     value: totalProfit.value / data.length
                 };
                 setStats([ totalIncome, totalExpenses, totalProfit, averageIncome, averageExpenses,  averageProfit])
@@ -309,7 +309,7 @@ const HomePage = () => {
                                             highlightScope: { faded: 'global', highlighted: 'item' },
                                             faded: { innerRadius: 15, additionalRadius: -15, color: 'gray' },
                                             data: [
-                                                { id: 0, value: thisMonthIncome - thisMonthExpenses, label: t("Profit"), color:"green" },
+                                                { id: 0, value: thisMonthIncome - thisMonthExpenses, label: t("Profit") },
                                                 { id: 1, value: thisMonthExpenses, label: t("Expenses"), color: "#b50000"},
 
                                             ],
@@ -360,7 +360,7 @@ const HomePage = () => {
                                 <BarChart
                                     dataset={dataSet}
                                     series={[
-                                        {dataKey: "income", label: t("Income"), formatMoney},
+                                        {dataKey: "income", label: t("Income"), formatMoney, color: '#2f7c32'},
                                         {dataKey: "expenses", label: t("Expenses"), formatMoney, color:"#b50000"},
                                     ]}
                                     height={390}
@@ -384,7 +384,7 @@ const HomePage = () => {
                                 <LineChart
                                     dataset={dataSet}
                                     series={[
-                                        {dataKey: "profit", label: t("Profit"), color:"green"},
+                                        {dataKey: "profit", label: t("Profit")},
 
                                     ]}
                                     xAxis={[{ dataKey: 'month', scaleType: 'band' }]}
