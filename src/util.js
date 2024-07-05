@@ -1,9 +1,12 @@
 
 
 
-const localhost = 'https://money-manager-api-c0fg.onrender.com';
+const API_URL = 'https://money-manager-api-c0fg.onrender.com';
 
+function formatPercent(value, name, props) {
 
+    return `${name}: ${Math.round(value)}%`
+}
 function monthToFormat(givenMonth, language){
 
 
@@ -75,9 +78,9 @@ function parseToDate(dateString, language){
            // Create a Date object with the parsed month number and year
            const date = new Date(array[1], monthNum - 1); // Subtract 1 from month number because months are zero-based in JavaScript
            // Format the date to display the month name and year
-           const formattedDate = date.toLocaleString(lang, { month: 'long', year: 'numeric' });
+           const formattedDate = date.toLocaleString(lang, { month: 'long', year: 'numeric',  });
 
-           return formattedDate;
+           return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
        } else {
            // receive day-month-year 11-04-2024
            // Convert month string to month number (assuming format 'MM')
@@ -118,4 +121,4 @@ const formatMoney = (stringNumber)=> {
 // Recibe [category, date, name, price]
 
 
-export {formatMoney, parseToDate, localhost, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat};
+export {formatMoney, parseToDate, API_URL, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat, formatPercent};

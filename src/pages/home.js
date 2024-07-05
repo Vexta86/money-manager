@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Navigate, useLocation, useNavigate} from 'react-router-dom';
 
-import {formatMoney, localhost} from "../util";
+import {formatMoney, API_URL} from "../util";
 import './styles.css';
 
-import Menu from '../modules/menu'
+import MainMenu from '../components/shared/mainMenu'
 import {useTranslation} from "react-i18next";
-import {Avatar, Chip, CircularProgress, Icon, Slider, Stack, Tooltip, Typography} from "@mui/material";
+import {Avatar, Chip, CircularProgress, Divider, Icon, Slider, Stack, Tooltip, Typography} from "@mui/material";
 import {ThemeProvider} from "@mui/material/styles";
 import {theme} from "../config/ThemeMUI";
 import { BarChart } from '@mui/x-charts/BarChart';
@@ -14,6 +14,7 @@ import Box from "@mui/material/Box";
 import {LineChart, PieChart} from "@mui/x-charts";
 
 import {MyContext} from "../App";
+import MonthRangeSelector from "../components/shared/MonthRangeSelector";
 
 
 const HomePage = () => {
@@ -51,9 +52,9 @@ const HomePage = () => {
         previous_month.setMonth(current_date.getMonth() - monthsAgo);
 
 
-        // setIsLoading(true)
+        setIsLoading(true)
 
-        const incomePromise = fetch(`${localhost}/incomes?month=${previous_month.getMonth() + 1}&year=${previous_month.getFullYear()}`, {
+        const incomePromise = fetch(`${API_URL}/incomes?month=${previous_month.getMonth() + 1}&year=${previous_month.getFullYear()}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -80,14 +81,14 @@ const HomePage = () => {
 
             })
             .then(total=>{
-                // setIsLoading(false)
+
                 return total;
             })
             .catch(err=>{
                 console.error('Error fetching incomes', err);
             })
 
-        const outcomePromise = fetch(`${localhost}/outcomes?month=${previous_month.getMonth() + 1}&year=${previous_month.getFullYear()}`, {
+        const outcomePromise = fetch(`${API_URL}/outcomes?month=${previous_month.getMonth() + 1}&year=${previous_month.getFullYear()}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -243,7 +244,7 @@ const HomePage = () => {
                     value: totalProfit.value / data.length
                 };
                 setStats([ totalIncome, totalExpenses, totalProfit, averageIncome, averageExpenses,  averageProfit])
-
+                setIsLoading(false)
             })
 
 
@@ -257,12 +258,13 @@ const HomePage = () => {
         return <Navigate to='/money-manager/login' />;
     }
     return (
-        <div>
-            <div className="container">
+        <Stack sx={{bgcolor: theme.palette.primary.light, minHeight: '100vh'}}>
+            <Stack className="container-2">
 
 
-                <Box className={'header-container'}  >
-                    <Box style={{flex: 1, cursor:"pointer"}} onClick={()=>{
+                <Box id={'header'} display="flex" alignItems="center" margin="4%" justifyContent="space-between" >
+                    <Stack
+                        sx={{flex: 1, cursor: "pointer",  alignItems: 'center'}} onClick={()=>{
                         navigate('/money-manager/home/user', { state: {
                                 auth:auth,
                                 language: language,
@@ -271,15 +273,15 @@ const HomePage = () => {
                                 email: user.email
                             }} )
                     }}>
-                        <Avatar sx={{bgcolor: "#393E46"}}>
+                        <Avatar sx={{bgcolor:  theme.palette.primary.dark}}>
                             {user.name ? user.name[0] : null}
                         </Avatar>
                         <Typography style={{margin:0}}>
                             {user.name ? user.name : null}
                         </Typography>
 
-                    </Box>
-                    <Box style={{flex: 2}}>
+                    </Stack>
+                    <Box sx={{flex: 2,  textAlign: 'center' }}>
                         <Typography variant={'h4'} >{t("Home")}</Typography>
                     </Box>
 
@@ -289,16 +291,16 @@ const HomePage = () => {
                 <ThemeProvider theme={theme}>
                     {isLoading ?
                         <CircularProgress/> :
-                        <div className={'container-data'}>
+                        <Stack marginBottom={'20%'} alignItems={'center'}>
 
 
 
-                            <Typography variant={'h5'}>{t("This Month")}</Typography>
+                            <Typography variant={'h4'} component={'h4'}>{t("This Month")}</Typography>
 
-                            <Typography>{formatMoney(balance)}</Typography>
+                            <Typography variant={'body1'}>{formatMoney(balance)}</Typography>
 
 
-                            <Box width={"50%"}>
+                            <Box >
 
                                 <PieChart
                                     slotProps={{
@@ -322,53 +324,12 @@ const HomePage = () => {
                             </Box>
 
 
-                            <Typography variant={'h5'}> {monthRange} {t("Previous Months")}</Typography>
-                            <Box width={"40%"}>
-
-                                <Slider
-                                    defaultValue={monthRange}
-                                    step={1} min={2} max={12}
-                                    aria-label="Default"
-                                    valueLabelDisplay="auto"
-                                    onChange={(e, newValue)=>setMonthRange(newValue)}
-                                />
-                            </Box>
-
-                            <Stack direction={'row'} spacing={1}>
-                                <Stack spacing={1}>
-                                    {stats?.map(item=>{
-                                        if (item.name.includes('Income')){
-                                            return StatChip(item)
-                                        }
+                            <Divider variant={'fullWidth'}/>
 
 
-                                    })}
-                                </Stack>
-
-                                <Stack spacing={1}>
-                                    {stats?.map(item=>{
-                                        if (item.name.includes('Expenses')){
-                                            return StatChip(item)
-                                        }
+                            <MonthRangeSelector monthRange={monthRange} setMonthRange={setMonthRange}/>
 
 
-                                    })}
-                                </Stack>
-                            </Stack>
-
-                            <Box width={"90%"}>
-                                <BarChart
-                                    dataset={dataSet}
-                                    series={[
-                                        {dataKey: "income", label: t("Income"), formatMoney, color: '#2f7c32'},
-                                        {dataKey: "expenses", label: t("Expenses"), formatMoney, color:"#b50000"},
-                                    ]}
-                                    height={390}
-                                    grid={{ horizontal: true }}
-                                    xAxis={[{ dataKey: 'month', scaleType: 'band' }]}
-                                    margin={{ top: 60, bottom: 30, left: 70, right: 0 }}
-                                />
-                            </Box>
 
                             <Stack spacing={1}>
                                 {stats?.map(item=>{
@@ -396,7 +357,7 @@ const HomePage = () => {
                             </Box>
 
 
-                        </div>
+                        </Stack>
 
                     }
                 </ThemeProvider>
@@ -405,12 +366,12 @@ const HomePage = () => {
 
 
 
-            </div>
+            </Stack>
             <div className="menuContainer">
-                <Menu auth={auth} language={language} />
+                <MainMenu auth={auth} language={language} />
 
             </div>
-        </div>
+        </Stack>
         
     );
 }

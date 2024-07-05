@@ -1,18 +1,18 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {daysToMonths, formatMoney, localhost, weeksToMonths, yearsToMonths} from "../util";
+import {daysToMonths, formatMoney, API_URL, weeksToMonths, yearsToMonths} from "../../util";
 import TextField from '@mui/material/TextField';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, Icon, Typography} from "@mui/material";
-import {theme, themeRed} from "../config/ThemeMUI";
+import {theme, themeRed} from "../../config/ThemeMUI";
 import {ThemeProvider} from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import FrequencySelector from "./FrequencySelector";
-import OnlineChecker from "./OnlineChecker";
+import OnlineChecker from "../shared/OnlineChecker";
 import dayjs from "dayjs";
-import {MyContext} from "../App";
+import {MyContext} from "../../App";
 
 
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
@@ -20,14 +20,15 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
-const QuickInput = ({   auth: auth,
-                        type: type,
-                        categories: categories,
-                        refreshData: refreshData
+const QuickInput = ({   auth,
+                        type,
+                        categories,
+                        refreshData
                         }) =>{
 
     const { t } = useTranslation();
     const current_date = new Date();
+
 
     const {isOffline} = useContext(MyContext);
     const [nameInput, setNameInput] = useState('');
@@ -63,7 +64,7 @@ const QuickInput = ({   auth: auth,
             frequencyMonth = (frequencyInput);
         }
 
-        fetch(`${localhost}/frequent-outcomes`,{
+        fetch(`${API_URL}/frequent-outcomes`,{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ const QuickInput = ({   auth: auth,
 
     };
     const newIncome = async () => {
-        fetch(`${localhost}/${type}`, {
+        fetch(`${API_URL}/${type}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -117,7 +118,9 @@ const QuickInput = ({   auth: auth,
                     } else {
                         setMsg('Successful');
 
-                        refreshData();
+                        const dateFetched = new Date(dateInput)
+
+                        refreshData(dateFetched.getMonth()+1, dateFetched.getFullYear());
 
                         setDateInput(current_date)
 
@@ -141,25 +144,28 @@ const QuickInput = ({   auth: auth,
 
 
     return(
-        <div >
-
-
-
-            <ThemeProvider theme={type.includes('income') ? theme : themeRed}>
-
-
+        <Box margin={'2% 0 0 0'}>
 
                 <Fab variant="extended" color="primary" aria-label="add" onClick={()=>setOpen(true)}>
                     <Icon>add</Icon>
                     {t(`New ${type.includes('outcomes') ? 'Expense' : 'Income'}`)}
                 </Fab>
 
-                <Dialog open={open} onClose={()=>setOpen(false)}>
+                <Dialog open={open} onClose={()=>setOpen(false)} >
 
                     <DialogTitle id="quick-input-title">
-                        <b>
-                            {t(`New ${type.includes('outcomes') ? 'Expense' : 'Income'}`)}
-                        </b>
+                        <Box display={'flex'} alignItems={'center'} >
+                            <Icon onClick={()=>setOpen(false)} style={{cursor: "pointer", marginRight: "8%"}}  >
+                                arrow_back
+                            </Icon>
+
+
+                            <Typography variant={'h4'} >
+                                {t(`New ${type.includes('outcomes') ? 'Expense' : 'Income'}`)}
+                            </Typography>
+                        </Box>
+
+
                     </DialogTitle>
 
 
@@ -175,9 +181,9 @@ const QuickInput = ({   auth: auth,
                         onSubmit={e=>{
                             e.preventDefault();
                             if (type.includes('frequent')){
-                                newFrequent()
+                                newFrequent().then()
                             }else{
-                                newIncome()
+                                newIncome().then()
                             }
                         }}
                     >
@@ -234,11 +240,13 @@ const QuickInput = ({   auth: auth,
 
 
                         <DialogActions>
-                            <Button  onClick={()=>setOpen(false)}>
-                                {t('Cancel')}
 
-                            </Button>
-                            <Button variant="contained" type={'submit'}>
+
+                            <Button
+                                variant="contained"
+                                type={'submit'}
+                                startIcon={<Icon>save</Icon>}
+                            >
                                 {type.includes('income') ? t("New Income") : t('New Expense')}
 
                             </Button>
@@ -248,18 +256,7 @@ const QuickInput = ({   auth: auth,
                     </Box>
 
                 </Dialog>
-
-
-            </ThemeProvider>
-
-
-
-
-
-
-
-
-        </div>
+        </Box>
 
     )
 }

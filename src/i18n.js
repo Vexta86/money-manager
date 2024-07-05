@@ -114,9 +114,16 @@ i18n
 
                     'Average Income': 'Ingreso Promedio',
                     'Average Expenses': 'Gastos Promedio',
-                    'Average Profit': 'Ganancias Promedio'
+                    'Average Profit': 'Ganancias Promedio',
 
+                    'Enter your full name': 'Ingresa tu nombre completo',
+                    'Provide your email address to receive updates and account notifications.': 'Proporciona tu dirección de correo electrónico para recibir actualizaciones y notificaciones de cuenta.',
+                    'Create a password with at least 6 characters, including uppercase, lowercase, and a number.': 'Crea una contraseña con al menos 6 caracteres, incluyendo mayúsculas, minúsculas y un número.',
+                    'Confirm your password to ensure accuracy': 'Confirma tu contraseña para asegurar su exactitud',
+                    'Ready to get started?': '¿Listo para empezar?',
+                    'Welcome! Let\'s get started with your account creation.': '¡Bienvenido! Comencemos con la creación de tu cuenta.',
 
+                    'Repeat Password': 'Repetir Contraseña'
                     // Add more translations here
                 },
             },

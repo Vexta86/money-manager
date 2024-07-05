@@ -1,4 +1,4 @@
-import '../financial-tools/tools.css'
+import '../../financial-tools/tools.css'
 import {useNavigate} from "react-router-dom";
 const ToolCard = ({name: name, description: description, link: link, auth: auth})=>{
     const navigate = useNavigate()

@@ -1,11 +1,8 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {useTranslation} from "react-i18next";
-import {theme} from "../config/ThemeMUI";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
-import {formatMoney} from "../util";
 import TextField from "@mui/material/TextField";
-import {ThemeProvider} from "@mui/material/styles";
-import Box from "@mui/material/Box";
+
 
 const FrequencySelector = ({
     frequencyInput: frequencyInput,

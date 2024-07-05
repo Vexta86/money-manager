@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
-import {Navigate, useLocation, useNavigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import './styles.css';
-import {formatMoney, localhost, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat} from "../util";
+import {formatMoney, API_URL, daysToMonths, weeksToMonths, yearsToMonths, monthToFormat} from "../util";
 import {useTranslation} from "react-i18next";
 
 
@@ -9,41 +9,45 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
-import { ThemeProvider } from '@mui/material/styles';
+
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Autocomplete from "@mui/material/Autocomplete";
-import {Button, CircularProgress, Icon} from "@mui/material";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import {theme} from "../config/ThemeMUI";
+import {
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Icon,
+    Typography
+} from "@mui/material";
+
 import Alert from "@mui/material/Alert";
-import FrequencySelector from "../modules/FrequencySelector";
-import OnlineChecker from "../modules/OnlineChecker";
+import FrequencySelector from "../components/income-outcome/FrequencySelector";
+import OnlineChecker from "../components/shared/OnlineChecker";
 
 
 
 
-const EditPage = () => {
+const EditPage = ({auth, language, categories, elementID, type, open, doc, changeOpen, fetchCome}) => {
 
     // receives auth as a parameter when redirecting
-
-    const location = useLocation();
-    const auth = location.state?.auth;
-    const language = location.state?.language;
-    const categories = location.state?.categories;
 
     const { t, i18n } = useTranslation();
 
 
-    const elementID = location.state?.id;
-    const type = location.state?.type;
-    const isFrequent = type.includes('frequent');
 
-    const navigate = useNavigate();
+    const handleClose = ()=>{
+        changeOpen(false)
+
+    }
 
 
-    const [authenticated, setAuthenticated] = useState(auth); // Set authenticated based on token existence
 
+
+    const isFrequent = type?.includes('frequent');
 
 
 
@@ -84,15 +88,22 @@ const EditPage = () => {
     function onDelete(){
         const confirmed = window.confirm(t('Are you sure you want to delete this item?'));
 
+        console.log(`${API_URL}/${type}/${elementID}`)
         if (confirmed){
-            fetch(`${localhost}/${type}/${elementID}`,{
+            fetch(`${API_URL}/${type}/${elementID}`,{
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': '*/*',
                     'Authorization': auth,
                 },
-            }).then(navigate(-1))
+            }).then(res=>{
+                return(res.json())
+            })
+                .then(d => console.log(d))
+                .finally(()=>{
+                    handleClose()
+                })
         }
 
 
@@ -119,21 +130,21 @@ const EditPage = () => {
 
             let frequencyMonth;
 
-            if(frequencyScale.includes('Day')){
+            if(frequencyScale?.includes('Day')){
 
 
                 frequencyMonth = (daysToMonths(frequencyInput));
 
-            } else if(frequencyScale.includes('Week')){
+            } else if(frequencyScale?.includes('Week')){
 
 
                 frequencyMonth = (weeksToMonths(frequencyInput));
 
-            } else if (frequencyScale.includes('Year')){
+            } else if (frequencyScale?.includes('Year')){
 
                 frequencyMonth = (yearsToMonths(frequencyInput));
 
-            } else if (frequencyScale.includes('Month')){
+            } else if (frequencyScale?.includes('Month')){
 
                 frequencyMonth = (frequencyInput);
 
@@ -153,7 +164,7 @@ const EditPage = () => {
 
 
 
-        fetch(`${localhost}/${type}/${elementID}`, {
+        fetch(`${API_URL}/${type}/${elementID}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -165,161 +176,185 @@ const EditPage = () => {
             if (res.ok){
                 setMsg('Successful')
                 alert(t('Changes saved successfully'));
-                navigate(-1);
+
             }
             else {
                 setMsg('Something went wrong')
             }
         })
+            .finally(()=>{
+                const currentDate = new Date()
+                handleClose();
+
+                fetchCome(currentDate.getMonth() + 1, currentDate.getFullYear() )
+            })
 
     }
 
 
     useEffect(() => {
+        setIsLoading(true)
         i18n.changeLanguage(language).then();
 
         if (!auth) {
             return; // No need to make API call if token doesn't exist
         }
-        setIsLoading(true)
-        fetch(`${localhost}/${type}/${elementID}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': '*/*',
-                'Authorization': auth,
-            },
-        }).then((response) => {
-            if (!response.ok) {
-                setAuthenticated(false);
-                throw new Error('Network response was not ok');
-            }
-            setAuthenticated(true);
-            return response.json();
 
-        }).then(data => {
+        setPriceInput(doc.price);
+        setCategoryInput(doc.category);
+        setNameInput(doc.name)
+
+        if (isFrequent) {
+            const ogFrequency = monthToFormat(doc.frequency, language);
+            setFrequencyInput(ogFrequency[0]);
+            setFrequencyScale(ogFrequency[1]);
+        } else {
+
+            setSelectedDate(dayjs(doc.date))
 
 
+        }
 
-            setPriceInput(data.price);
-            setCategoryInput(data.category);
-            setNameInput(data.name)
-
-            if (isFrequent) {
-                const ogFrequency = monthToFormat(data.frequency, language);
-                setFrequencyInput(ogFrequency[0]);
-                setFrequencyScale(ogFrequency[1]);
-            } else {
-
-                setSelectedDate(dayjs(data.date))
+        setIsLoading(false)
 
 
-            }
 
-            setIsLoading(false)
-        }).catch(error => {
-            setMsg('Error fetching data:', error);
-            setIsLoading(false);
 
-        });
+
 
     }, []);
 
-    if (!authenticated) {
-        return <Navigate to='/money-manager/login'/>;
-    }
+
+
 
 
 
     return (
-        <div>
-            <div className={'container'}>
 
-                <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+        <Dialog open={open} onClose={handleClose} >
+            <DialogTitle >
 
-
-                        <Icon onClick={() => navigate(-1)} style={{cursor: "pointer"}}>
-                            arrow_back
-                        </Icon>
-
-
-                    <h1>
-                        {t("Editing")} {nameInput}
-                    </h1>
-                </div>
-
-                <OnlineChecker/>
+                <Box display={'flex'} alignItems={'center'} >
+                    <Icon onClick={()=>handleClose()} style={{cursor: "pointer", marginRight: "8%"}}  >
+                        arrow_back
+                    </Icon>
 
 
-                <ThemeProvider theme={theme}>
-
-                    {isLoading ?
-                        <CircularProgress/> :
-                        <div className={'container'}>
-                            <Box
-                                component="form"
-                                sx={{
-                                    '& .MuiTextField-root': {m: 1, width: '25ch'},
-                                    'display': 'flex',
-                                    'flexDirection': 'column'
-                                }}
-                                noValidate
-                                autoComplete="off"
-                            >
-                            <TextField id="name"
-                                       type="text"
-                                       error={!nameInput}
-                                       label={t("Name")}
-                                       variant="outlined"
-                                       value={nameInput}
-                                       onChange={(e) => setNameInput(e.target.value)}
-
-                            />
-                            {isFrequent ?
-                                <FrequencySelector frequencyScale={frequencyScale} frequencyInput={frequencyInput}
-                                                   changeFrequencyScale={changeFrequencyScale}
-                                                   changeFrequencyInput={changeFrequencyInput}/> :
-                                <AdvanceDateSelector/>}
-
-                            <TextField id="price"
-                                       type="number"
-                                       label={t("Price") + ' ' + formatMoney(priceInput)}
-                                       variant="outlined"
-                                       value={priceInput}
-                                       error={!priceInput}
-                                       onChange={(e) => setPriceInput(e.target.value)}
-
-                            />
-
-                            <Autocomplete
-                                freeSolo
-                                disablePortal
-                                id="category"
-                                options={categories}
-                                value={categoryInput}
-
-                                onChange={(e, newValue) => setCategoryInput(newValue)}
-                                renderInput={(params) =>
-                                    <TextField onChange={(e) => setCategoryInput(e.target.value)} {...params}
-                                               label="Category" error={!categoryInput}/>}
-                            />
-                            </Box>
-
-                                <ButtonGroup variant="contained" aria-label="Basic button group">
-
-                                    <Button onClick={onDelete} color='error'>️{t("Delete")}</Button>
-                                    <Button onClick={onSave} >{t("Save")}</Button>
-
-                                </ButtonGroup>
-                        </div>}
-
-                    {msg ? <Alert severity={msg.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
-
-                </ThemeProvider>
+                    <Typography variant={'h4'} >
+                        {t("Editing")}
+                    </Typography>
+                </Box>
 
 
-            </div>
-        </div>
+            </DialogTitle >
+
+            <Box
+                component="form"
+                sx={{
+                    '& .MuiTextField-root': { m: 1, width: '25ch' },
+                    'display': 'flex',
+                    'flexDirection':'column'
+                }}
+                noValidate
+
+                onSubmit={e=>{
+                    e.preventDefault();
+                    onSave();
+                }}
+            >
+
+                <DialogContent sx={{
+                    '& .MuiTextField-root': { m: 1, width: '25ch' },
+                    'display': 'flex',
+                    'flexDirection':'column'
+                }}>
+
+
+
+                    <OnlineChecker/>
+
+                    {msg ? <Alert severity={msg?.includes('successful') ? "success" : "error"}>{t(msg)}</Alert> : null}
+
+
+                    <Box
+                        component="form"
+                        sx={{
+                            '& .MuiTextField-root': {m: 1, width: '25ch'},
+                            'display': 'flex',
+                            'flexDirection': 'column'
+                        }}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <TextField id="name"
+                                   type="text"
+                                   error={!nameInput}
+                                   label={t("Name")}
+                                   variant="outlined"
+                                   value={nameInput}
+                                   onChange={(e) => setNameInput(e.target.value)}
+
+                        />
+                        {isFrequent ?
+                            <FrequencySelector frequencyScale={frequencyScale} frequencyInput={frequencyInput}
+                                               changeFrequencyScale={changeFrequencyScale}
+                                               changeFrequencyInput={changeFrequencyInput}/> :
+                            <AdvanceDateSelector/>}
+
+                        <TextField id="price"
+                                   type="number"
+                                   label={t("Price") + ' ' + formatMoney(priceInput)}
+                                   variant="outlined"
+                                   value={priceInput}
+                                   error={!priceInput}
+                                   onChange={(e) => setPriceInput(e.target.value)}
+
+                        />
+
+                        <Autocomplete
+                            freeSolo
+                            disablePortal
+                            id="category"
+                            options={categories}
+                            value={categoryInput}
+
+                            onChange={(e, newValue) => setCategoryInput(newValue)}
+                            renderInput={(params) =>
+                                <TextField onChange={(e) => setCategoryInput(e.target.value)} {...params}
+                                           label="Category" error={!categoryInput}/>}
+                        />
+                    </Box>
+
+
+
+
+
+
+                </DialogContent>
+
+                <DialogActions>
+
+
+                    <Button onClick={onDelete}
+                            startIcon={<Icon>delete</Icon>}
+                    >️
+                        {t("Delete")}
+                    </Button>
+
+                    <Button
+                            type={'submit'}
+                            variant={"contained"}
+                            startIcon={<Icon>save</Icon>}
+                    >
+                        {t("Save")}
+                    </Button>
+
+
+                </DialogActions>
+            </Box>
+
+        </Dialog>
+
 
     );
 }

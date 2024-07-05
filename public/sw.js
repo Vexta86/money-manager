@@ -166,8 +166,8 @@ const APP_SHELL = [
 
 const APP_SHELL_IMMUTABLE = [
     'https://cdn.jsdelivr.net/npm/pouchdb@7.0.0/dist/pouchdb.min.js',
-    '../src/modules/Table.js',
-    '../src/modules/FilterCategory',
+    '../src/components/Table.js',
+    '../src/components/FilterCategory',
     '../config/ThemeMUI',
 
 ]

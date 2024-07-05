@@ -265,10 +265,10 @@ h1 {
 }
 .cell{
     flex: 1; /* Distribute remaining space evenly among cells */
-    box-sizing: border-box; /* Include padding and border in cell size */
-    text-align: center; /* Optional: Center cell content */
-    padding-top: 1%;
-    padding-bottom: 1%;
+
+    /*text-align: center; !* Optional: Center cell content *!*/
+    /*padding-top: 1%;*/
+    /*padding-bottom: 1%;*/
 
 }
 
@@ -376,7 +376,7 @@ h1 {
 
         min-width: 15vh;
         width: fit-content;
-        background-color: #ccc; /* Example background color */
+
     }
 
     .menu {

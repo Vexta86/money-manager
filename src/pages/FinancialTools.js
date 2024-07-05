@@ -1,8 +1,8 @@
 import {CardActionArea, CardContent, Typography} from "@mui/material";
 import './styles.css';
 import '../financial-tools/tools.css'
-import ToolCard from "../modules/ToolCard";
-import Menu from "../modules/menu";
+import ToolCard from "../components/financial-tools/ToolCard";
+import MainMenu from "../components/shared/mainMenu";
 import React, {useEffect} from "react";
 import {useLocation} from "react-router-dom";
 import {useTranslation} from "react-i18next";
@@ -67,7 +67,7 @@ const FinancialTools = ()=>{
         </div>
 
         <div className="menuContainer">
-            <Menu auth={auth} language={language}/>
+            <MainMenu auth={auth} language={language}/>
 
         </div>
 

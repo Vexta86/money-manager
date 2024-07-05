@@ -1,7 +1,7 @@
 import {Chip} from "@mui/material";
 import {useContext, useEffect} from "react";
 import Alert from "@mui/material/Alert";
-import {MyContext} from "../App";
+import {MyContext} from "../../App";
 
 
 const OnlineChecker = () => {

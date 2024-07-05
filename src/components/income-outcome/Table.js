@@ -1,65 +1,84 @@
-import {formatMoney, monthToFormat} from "../util";
-import React from "react";
+import {formatMoney, monthToFormat} from "../../util";
+import React, { useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
+import EditModule from "../../pages/edit";
+import Box from "@mui/material/Box";
+import {Divider, List, ListItem, ListItemButton, ListItemText, Typography, useTheme} from "@mui/material";
 
-const TableRow  = ({elements, id, auth, type, language, categories})=> {
+const TableRow  = ({elements, id, auth, type, language, categories, bg, doc, refresh})=> {
+    const theme = useTheme();
 
-    const navigate = useNavigate()
-    const editFunction = ()=>{
-        if (auth){
-            navigate('/money-manager/edit', { state: {
-                    categories: categories,
-                    auth: auth,
-                    language: language,
-                    id: id,
-                    type: type }});
-        }
+    const [open, setOpen] = useState(false);
+    const changeOpen = (value) =>{
+
+        setOpen(value)
     }
 
-    let rowClass = 'tableRow';
-
-    if (!id){
-        rowClass='tableHeader'
-    } else if(id.includes('space')){
-        rowClass='space'
+    const insideElement = (element, index) =>{
+        return(
+            <Box key={index} flex={1} >
+                <Typography color={bg ? 'primary.light' : null} variant={bg ? 'h6' : 'body1'} >
+                    {element}
+                </Typography>
+            </Box>
+        )
     }
 
     return(
-        <div id={id} className={rowClass} onClick={editFunction}>
+        <>
+            <ListItem
+                id={id}
+                display={"flex"}
+
+
+                sx={{
+                    bgcolor: bg ? theme.palette.primary.main : null,
+                }}
+            >
+
+                {bg ? elements.map(insideElement) :
+                    <>
+                        <ListItemButton alignContent={'center'}   onClick={()=> changeOpen(true)} >
+                            {elements.map(insideElement)}
+                        </ListItemButton>
+                        <EditModule open={open} type={type}
+                                    language={language}
+                                    categories={categories}
+                                    auth={auth}
+                                    doc={doc}
+                                    elementID={id}
+                                    changeOpen={changeOpen}
+                                    fetchCome={refresh}
+
+                        />
+                    </>
+
+                }
 
 
 
-            {elements.map((element, index) => (
-                <div key={index} className="cell">
-                    <p className="pTable">{element}</p>
-                </div>
-            ))}
 
 
+            </ListItem>
+            <Divider/>
+        </>
 
-        </div>)
+
+    )
 }
 
 
 
-const Table = ({   auth: auth,
-                   language:language,
-                   selectedCategory: selectedCategory,
-                   headers: headers,
-                   docs: docs,
-                   type:type,
-                   categories: categories,
-               })=>{
+const Table = ({   auth,language,selectedCategory,headers,docs,type,categories,refresh})=>{
     const {t} = useTranslation();
     function TableHeader() {
-        return(<TableRow elements={headers}/>)
+        return(<TableRow elements={headers} bg={true}/>)
     }
 
     function TotalRow() {
         let array = ['Total']
-        if(type.includes('frequent')){
+        if(type?.includes('frequent')){
             array.push('')
             let total = docs ? formatMoney(docs.reduce((acc, item) => {
                     if (selectedCategory !== '' && selectedCategory === item.category) {
@@ -88,12 +107,12 @@ const Table = ({   auth: auth,
             array.push(total);
 
         }
-        return(<TableRow elements={array}/>)
+        return(<TableRow elements={array} bg={true}/>)
     }
 
     return (
-        <div className="tableContainer">
-            <div className="table">
+        <Box className="tableContainer">
+            <List className="table">
                 <TableHeader/>
 
                 {docs ? docs.map((item) => {
@@ -138,6 +157,8 @@ const Table = ({   auth: auth,
                                          type={type}
                                          language={language}
                                          categories={categories}
+                                         doc={item}
+                                         refresh={refresh}
                         />
                     } else {
                         return null
@@ -148,8 +169,8 @@ const Table = ({   auth: auth,
                 <TotalRow/>
 
 
-            </div>
-        </div>
+            </List>
+        </Box>
     )
 }
 

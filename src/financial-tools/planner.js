@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Navigate, useLocation, useNavigate} from 'react-router-dom';
 
-import {formatMoney, localhost} from "../util";
+import {formatMoney, API_URL} from "../util";
 import '../pages/styles.css';
 
-import Menu from '../modules/menu'
+import MainMenu from '../components/shared/mainMenu'
 import {useTranslation} from "react-i18next";
-import QuickInput from "../modules/quickInput";
-import Table from "../modules/Table";
+import QuickInput from "../components/income-outcome/quickInput";
+import Table from "../components/income-outcome/Table";
 
-import {CircularProgress, Icon} from "@mui/material";
+import {CircularProgress, Container, Icon, useTheme} from "@mui/material";
 import {ThemeProvider} from "@mui/material/styles";
 import {themeRed} from "../config/ThemeMUI";
 import {MyContext} from "../App";
+import Box from "@mui/material/Box";
 
 
 
@@ -40,7 +41,7 @@ const Planner = () => {
 
     function fetchFrequents() {
         setIsLoading(true)
-        fetch(`${localhost}/frequent-outcomes`, {
+        fetch(`${API_URL}/frequent-outcomes`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ const Planner = () => {
                         <h2>{t('Category')} {cat.category}</h2>
                         <Table auth={auth} categories={frequentCats} selectedCategory={cat.category}
                                type={'frequent-outcomes'} docs={cat.elements[0]} language={language}
-                               headers={[t('Expenses'), t('Frequency'), t('Monthly Budget')]}/>
+                               headers={[t('Expenses'), t('Frequency'), t('Monthly Budget')]} refresh={fetchFrequents}/>
                     </div>
 
 
@@ -135,9 +136,9 @@ const Planner = () => {
 
 
     return (
-        <div>
+
             <ThemeProvider theme={themeRed}>
-                <div className="container-red">
+                <Container   sx={{ backgroundColor: themeRed.palette.primary.light, padding: '8% 4% 8% 4%', minHeight:'100vh', height: '100%', alignItems:'center'}}>
 
 
                     <h1>
@@ -152,25 +153,22 @@ const Planner = () => {
                     </h1>
 
                     <h3>Total = {formatMoney(total)}</h3>
-                    <div className='container-2'>
 
-                        <div className='frequent-container'>
+
+                    <QuickInput auth={auth} categories={frequentCats} type={'frequent-outcomes'}
+                                refreshData={fetchFrequents}/>
+
+
 
                             {isLoading ? <CircularProgress/> : <CategoryTables/>}
 
-                        </div>
 
 
-                        <QuickInput auth={auth} categories={frequentCats} type={'frequent-outcomes'}
-                                    refreshData={fetchFrequents}/>
 
-                    </div>
-
-
-                </div>
+                </Container>
             </ThemeProvider>
 
-        </div>
+
 
     );
 }

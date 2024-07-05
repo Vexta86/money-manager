@@ -9,7 +9,9 @@ import PlannerPage from './financial-tools/planner';
 import FinancialTools from "./pages/FinancialTools";
 import EditPage from "./pages/edit";
 import UserPage from "./pages/user";
-import {createContext, useEffect, useState} from "react";
+import React, {createContext, useEffect, useState} from "react";
+import MainMenu from "./components/shared/mainMenu";
+import Savings from "./financial-tools/savings";
 
 const MyContext = createContext();
 
@@ -53,11 +55,12 @@ function App() {
               <Route path='/money-manager/financial-tools' element={<FinancialTools/>} />
 
               <Route path='/money-manager/financial-tools/planner' element={<PlannerPage/>} />
-              <Route path='/money-manager/edit' element={<EditPage/>} />
+              <Route path='/money-manager/financial-tools/savings' element={<Savings />} />
 
               <Route path='/money-manager/home/user' element={<UserPage/>} />
 
             </Routes>
+
           </MyProvider>
 
         </Router>

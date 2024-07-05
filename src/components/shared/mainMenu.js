@@ -5,7 +5,7 @@ import { green, red } from '@mui/material/colors';
 import {Icon} from "@mui/material";
 
 
-function Menu({ auth, language }) {
+function MainMenu({ auth, language }) {
 
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
@@ -62,5 +62,5 @@ function Menu({ auth, language }) {
     );
 }
 
-export default Menu;
+export default MainMenu;
 

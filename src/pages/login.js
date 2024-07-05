@@ -3,12 +3,12 @@ import React, {useContext, useEffect, useState} from "react";
 // for redirecting and parsing the token
 import {useLocation, useNavigate} from 'react-router-dom';
 
-import { localhost } from "../util";
+import { API_URL } from "../util";
 
 import './styles.css';
 
 import { useTranslation } from 'react-i18next';
-import {Button} from "@mui/material";
+import {Button, Container, Stack, Typography, useMediaQuery} from "@mui/material";
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import {theme} from "../config/ThemeMUI";
@@ -17,10 +17,17 @@ import {ThemeProvider} from "@mui/material/styles";
 import Alert from "@mui/material/Alert";
 import LinearProgress from '@mui/material/LinearProgress';
 import {MyContext} from "../App";
+import {loginUser} from "../services/authService";
+import {insideStackSx, mainStackSx, msgBoxSx, typoLinkSx} from "../config/SxStyles";
+import Header from "../components/login-signup/Header";
+import LanguageSelector from "../components/login-signup/LanguageSelector";
 
 
 
 const LoginPage = ()=> {
+
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
     const { t, i18n } = useTranslation();
     const location = useLocation();
     const [language, setLanguage] = useState(location.state?.language ? location.state?.language : 'es');
@@ -38,35 +45,20 @@ const LoginPage = ()=> {
 
     const handleLoginRequest = async () => {
         setIsLoading(true);
-
-        fetch(localhost+'/user/login',{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': '*/*'
-            },
-            body: JSON.stringify({
-                email: emailInput.toLowerCase(),
-                password: passwordInput,
-            })
-        }).then(res=>{
-
-            return res.json()
-        }).then(data =>{
-            if (data.token){
+        try {
+            const data = await loginUser(emailInput, passwordInput);
+            if (data.token) {
                 const auth = 'Bearer ' + data.token;
-                updateIsAuth(true)
-                navigate('/money-manager/home', { state: {auth: auth, language: language}});
+                updateIsAuth(true);
+                navigate('/money-manager/home', { state: { auth: auth, language: language } });
             }
             setMsg(data.message);
-
-            setIsLoading(false)
-        }).catch(err=>{
-            updateIsAuth(false)
-            setMsg('Something went wrong')
-            setIsLoading(false)
-        })
-
+        } catch (err) {
+            updateIsAuth(false);
+            setMsg('Something went wrong');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
 
@@ -80,36 +72,25 @@ const LoginPage = ()=> {
         setMsg('')
     }, [passwordInput, emailInput])
     return (
-        <div className="container">
+        <ThemeProvider theme={theme}>
+            <Stack sx={mainStackSx}>
 
-            <h1>{t('Money Manager')}</h1>
+                <Header/>
 
-            <h2>{t('Log in')}</h2>
+                <Stack sx={insideStackSx}>
+                    <Typography variant={'h2'} color={'primary'}>{t('Log in')}</Typography>
 
-            <p>{t('Welcome back')}</p>
+                    <Typography>{t('Welcome back')}</Typography>
+
+                </Stack>
 
 
-            <ThemeProvider theme={theme}>
 
-                <Box sx={{width:"35%"}}>
-                    {msg ?
-                        <Alert severity={msg.includes('successful') ? "success" : "error"}>
-                            {t(msg)}
-                        </Alert> :
-                        null}
-                    {isLoading ?
-                        <LinearProgress/> :
-                        null }
-
-                </Box>
-
-                <Box
+                <Stack
+                    id={'login-form'}
                     component="form"
-                    sx={{
-                        '& .MuiTextField-root': {m: 1, width: '25ch'},
-                        'display': 'flex',
-                        'flexDirection': 'column'
-                    }}
+                    sx={insideStackSx}
+
                     noValidate
                     autoComplete="off"
                     onSubmit={(e)=>{
@@ -146,29 +127,40 @@ const LoginPage = ()=> {
                         {t('Log in')}
                     </Button>
 
+                </Stack>
+                <Box id={'loading'} sx={msgBoxSx}>
+                    {msg ?
+                        <Alert severity={msg.includes('successful') ? "success" : "error"}>
+                            {t(msg)}
+                        </Alert> :
+                        null}
+                    {isLoading ?
+                        <LinearProgress/> :
+                        null }
+
                 </Box>
+                <Stack sx={insideStackSx}>
+                    <Typography>
+                        {t("Don't have an account?")}
+                    </Typography>
+
+                    <Typography sx={typoLinkSx} onClick={()=>{
+                        navigate('/money-manager/signup', { state: {language: language}});}}>
+                        {t("Sign up")}
+                    </Typography>
+
+                </Stack>
 
 
-            </ThemeProvider>
+                <LanguageSelector setLanguage={setLanguage}/>
+            </Stack>
+
+        </ThemeProvider>
 
 
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <p>{t("Don't have an account?")} <a style={{color: "blue", cursor: "pointer", textDecoration: "underline"}} onClick={()=>{
-                navigate('/money-manager/signup', { state: {language: language}});
-            }}>{t("Sign up")}</a></p>
 
 
-            <ThemeProvider theme={theme}>
-                <ButtonGroup variant="contained" aria-label="Basic button group">
-                    <Button onClick={() => setLanguage('en')}>English</Button>
-                    <Button onClick={() => setLanguage('es')}>Español</Button>
 
-                </ButtonGroup>
-
-
-            </ThemeProvider>
-
-        </div>
     );
 }
 

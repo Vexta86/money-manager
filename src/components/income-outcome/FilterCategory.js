@@ -1,18 +1,12 @@
 import React from "react";
-import {ThemeProvider} from "@mui/material/styles";
-
 import {useTranslation} from "react-i18next";
-import {theme} from "../config/ThemeMUI";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 
-const FilterCategory = ({   selectedCategory: selectedCategory,
-                            changeCategory: changeCategory,
-                            monthCategories: monthCategories
-                     }) => {
+const FilterCategory = ({selectedCategory, changeCategory, monthCategories, theme}) => {
     const {t} = useTranslation();
 
     return(
-        <ThemeProvider theme={theme}>
+
             <FormControl fullWidth>
                 <InputLabel id="select-category-label" > {t("Category")}</InputLabel>
                 <Select
@@ -37,7 +31,7 @@ const FilterCategory = ({   selectedCategory: selectedCategory,
 
 
 
-        </ThemeProvider>
+
     )
 };
 
